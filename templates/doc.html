@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body {
+    font-family: sans-serif;
+    margin: 0px;
+}
+.topo {
+    color: #fff;
+    background: #3d3d47;
+    padding: 10px 90px;
+    font-size: 35px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.corpo {
+    margin: 90px;
+}
+.h1 {
+    font-size: 25px;
+    padding: 30px 0px;
+}
+.nome {
+    font-size: 20px;
+}
+
+li {
+    background: #eee;
+    padding: 11px;
+    list-style: 'route: ';
+    margin: 15px;
+}
+.rota {
+    font-size: 20px;
+    font-family: monospace;
+    background: #ccc;
+    padding: 0px 15px;
+    cursor: pointer;
+}
+.req {
+    margin: 0px;
+    font-family: monospace;
+    font-size: 17px;
+}
+
+.resp {
+    margin: 0px;
+    font-size: 17px;
+}
+
+.aa{
+    font-size: 0px;
+}
+
+.visto{ 
+        animation: in-blok .5s cubic-bezier(0.4, 0.01, 0.33, 1.12) forwards; 
+}
+.link:hover {
+    background: #e3fbe0;
+}
+.link:active {
+    background: #4bfac3;
+}
+
+
+@keyframes in-blok{
+    0%{
+        font-size: 0px;
+        margin: 0px;
+    }
+    100%{
+        font-size: 17px;
+        margin:19px ;
+        }
+}
+
+
+</style>
+<title>Documentation</title>
+</head>
+<body>
+
+    {%set doc = {
+        '/doc':{
+            'meth':"GET",
+            'out':"html",
+            'msg':"Fazendo um 'get' a resposta se ver nessa documentação."}
+        }       
+    %}
+
+    <div class="topo">
+        <div>
+            SIM_api v0.1
+        </div>
+        <div class="nome">
+            by:williams_sousa
+        </div>
+    </div>
+    
+    <div class="corpo">
+        <span class="h1">Documentação para uso de API</span> <br><br>
+        As rotas abaixo mostram as entradas e saída, além de como as requisições devem ser feita usado GET ou POST 
+        <br>Caso não seja seguido, o servidor tera como resposta erro da casa de 500.
+        <br> <br>
+        <ul>
+            {%set lista=[]%}
+            {%set cont=0%}
+            {%for i in doc%}
+            {%set __ = lista.append(0)%}
+            {%set cont = lista | length%}
+            <li class="link" id="li{{cont}}" onclick="ver('div{{cont}}')"> 
+                <span class="rota">{{i}}</span> 
+                <div class="req aa div{{cont}} ">
+                    Meth:{{doc[i]['meth']}}<br>
+                    Out:{{doc[i]['out']}} 
+                </div>
+                <div class="resp aa div{{cont}}"">
+                    {{doc[i]['msg']}}
+                </div>
+            </li>
+            {%endfor%}
+        </ul>
+
+    </div>
+
+<script>
+    function ver(id_div){
+        const aa=document.querySelectorAll('.visto');
+        console.log(aa)
+
+        aa.forEach(item =>{
+            item.classList.remove('visto');
+            })
+        
+        const div=document.querySelectorAll('.'+id_div);
+        console.log(div)
+
+        div.forEach(element => {
+            console.log(element)
+            element.classList.add('visto');
+        });
+    }
+
+</script>
+    
+</body>
+</html>
