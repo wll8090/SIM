@@ -89,8 +89,117 @@ li {
         '/doc':{
             'meth':"GET",
             'out':"html",
-            'msg':"Fazendo um 'get' a resposta se ver nessa documentação."}
-        }       
+            'msg':"Fazendo um 'get' a resposta se ver nessa documentação."
+            },
+
+        '/login/entrar/null':{
+            'meth': 'POST form-data ->  {"user": str, "pwd": str}',
+            'out': 'Json -> {"response": bool, "msg": str, "token": hex}',
+            'msg': "Para fazer login autenticado pelo LDAP"
+            },
+
+        '/$(user)/upcsv/chave':{
+                'meth':'POST form-data ->  {"filecsv": file, *"pwd":str}',
+                'out':'Json -> {"response": bool, "msg": str }',
+                'msg':"Para fazer upload da lista de candidatos no formato CSV <br>*'pwd' se o arquivo ja existir"
+            },
+
+        '/$(user)/candidatos/chave':{
+                'meth':'POST json ->  {"campo":str, "filtro":str, "acao":"add | del | cls"}',
+                'out':'Json -> {"alunos": list, "campos_valores":{"campo": list }, "filtro":{"campo":str} }',
+                'msg':"Retorna : alunos filtrados por chave: valor | filtros ativos | campos e filtros"
+            },
+
+        '/$(user)/get_dados_inscrito/chave':{
+                'meth':'POST json ->  {"cpf":str}',
+                'out':'Json -> {"response": bool, "dados":json}',
+                'msg':"Retorna : dados de um candidato"
+            },
+        
+        '/$(user)/enviar_email/chave':{
+                'meth':'POST json ->  {"NU_CPF_INSCRITO": cpf | "all"}',
+                'out':'Json -> {"response": boll, "msg":"confirmação via socket"}',
+                'msg':"para enviar email: user é apenas um candidato, formato json | 'all' é para todos filtrados <br>
+                Para Socket_IO: <br> emit > 'on_clinete()'  -> str 'email'
+                <br>rota > $(host)/$(usuario) "
+            },
+
+        '/$(user)/autenticar/chave':{
+                'meth':'POST json ->  {"acao": "listar | *ver | *deferir | *indeferir | *pendente" ,  *"cpf": str, *"texto":str , *"alter":json}',
+                'out':'Json -> {"response": boll, "msg":"confirmação via socket"}',
+                'msg':"Lista todos que ja validaram os dados <br>
+                *ver  *validar * reset : deve conter *cpf <br>
+                *reset : deve conter *texto <br>
+                *validar : deve conter *alter > {'NO_CAMPO' : 'NEW_VALUE'} "
+            },
+        '/$(user)/relatorio_matriculados/chave':{
+                'meth':'POST ',
+                'out':'Json -> {"response": boll, "token":str}',
+                'msg':"Gera o relatorio final de matriculados arquivo .csv disponivel em /file/chave?token=$(token)"
+            },
+
+        
+        '/$(user)/file/chave':{
+                'meth':'Get -> ARGS {"token":str}',
+                'out':'file -> file',
+                'msg':"Retorna o arquivo referente a refernete ao token"
+            },
+
+        '/$(user)/sair/chave':{
+                'meth':'POST',
+                'out':'file -> {"response" : bool}',
+                'msg':"para sair"
+            },
+
+        '/matricula/login/none':{
+                'meth':'POST json ->  {"pwd":str, "email":str, "cpf": str}',
+                'out':'Json -> {"dados": json , "response":bool, "token":str }',
+                'msg':"Retorna : para login de inscrito externos "
+            },
+        
+        '/matricula/$(user)/all_dados':{
+                'meth':'POST',
+                'out':'Json -> {"response": bool, "msg":str, "dados":json }',
+                'msg':"para ver todos os dados a ser validado"
+                },
+
+        '/matricula/$(user)/send_dados':{
+            'meth':'POST json ->  {"confirm":bool, "erro": str}',
+            'out':'Json -> {"response": bool, "msg":str }',
+            'msg':"Retorna : para inscrito enviar seus dados"
+            },
+
+        '/matricula/$(user)/send_file':{
+            'meth':'POST data-form : file ->  {"sexo":"M | F","rg_frente": .pdf, "rg_costa": .pdf, "cpf": .pdf, "nascimento": .pdf, "residencia": .pdf, "hitorico_escolar": .pdf  , "quitacao_eleitoral": .pdf, "inexistencia_vinculo": .pdf, "certificado": .pdf }',
+            'out':'Json -> {"response": bool, "msg":str}',
+            'msg':"Retorna : para inscrito enviar o PDF"
+            },
+            
+        '/matricula/$(user)/etapa':{
+            'meth':'POST',
+            'out':'Json -> {"response": bool, "etapa":int}',
+            'msg':"Retorna : para inscrito enviar o PDF"
+            },
+        
+        '/matricula/$(user)/meu_pdf':{
+            'meth':'POST',
+            'out':'Json -> {"response": bool, "lista": list}',
+            'msg':"para listar os pdf requisitados do inscrito"
+            },
+
+        '/matricula/$(user)/modelo_docs':{
+            'meth':'POST json ->  {"file":"all" | str}',
+            'out':'Json -> {"response": bool, "files" : list }  | file ',
+            'msg':"para ver todos os modelos de documentos"
+            },
+        
+        '/matricula/$(user)/sair':{
+                'meth':'POST',
+                'out':'Json -> {"response": bool, "msg":str}',
+                'msg':"para sair"
+                }
+        }
+
     %}
 
     <div class="topo">
@@ -119,12 +228,14 @@ li {
                     Meth:{{doc[i]['meth']}}<br>
                     Out:{{doc[i]['out']}} 
                 </div>
-                <div class="resp aa div{{cont}}"">
-                    {{doc[i]['msg']}}
+                <div class="resp aa div{{cont}}">
+                    {{doc[i]['msg']|safe }}
                 </div>
             </li>
             {%endfor%}
-        </ul>
+        </ul> <hr>
+
+
 
     </div>
 

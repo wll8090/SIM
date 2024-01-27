@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.3.2/socket.io.js"></script>
+    <title>Document</title>
+</head>
+<body>
+    <h1>Teste de socket-IO</h1>
+    <input type="text" id="nomea">
+    <button onclick="senda()">inicio de sok</button> <br><br>
+
+    <input type="text" id="nomeb">
+    <button onclick="sendb()">inicio de sok</button>
+
+
+<script>
+    
+var link ='http://192.168.40.102:5002/';
+const IOAA = io(link);
+
+IOAA.on('cliente', (data) => {
+    console.log(data)} );
+
+function senda() { 
+    console.log('enviado para /sergio.ti');
+    IOAA.emit('server','from sergio.ti')
+}
+
+
+
+
+const IOBB = io('http://192.168.40.102:5001/luis.ti');
+
+IOBB.on('on_cliente', (data) => {
+    console.log('luis.ti');
+    console.log(data)} );
+
+function sendb(){
+    IOBB.emit('on_server','msg de luiz.ti');
+
+}
+
+</script>
+
+
+</body>
+</html>

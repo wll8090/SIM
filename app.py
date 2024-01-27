@@ -1,13 +1,17 @@
-from flask import Flask
 from conf import *
-from routes import rotas
+from flask import Flask
+from objetos.avaliador.routes import rotas
+from objetos.candidato.rota_for_candidato import creat_rotas
+
 
 def create_app():
     app=Flask(__name__)
+    app.config['SECRET_KEY']='#D#$FW$%HGVE%YJ¨NHEdwedeDEDEdeDWRGcRthgvh'
+    creat_rotas(app)    # rotas de candiadato
+    IO=rotas(app)       # rota de servidor
 
-    rotas(app)
-
-    return app
+    return IO, app
 
 if __name__ == '__main__':
-    create_app().run(debug=debug, host=host, port=port)
+    IO, app=create_app()
+    IO.run(app, debug=debug, host=host_app, port=port)
