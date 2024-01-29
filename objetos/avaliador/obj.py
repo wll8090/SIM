@@ -142,7 +142,8 @@ class usuario:
     #####################################################################################################################################
     #####################################################################################################################################
     def _sende_mail(self, candidato, lista_thread, lista_de_espera): ## função para disparar o email de fato
-        envioEmail=enviar_email(open('./templates/template_email.html',encoding='utf8').read())
+        file=f'{sys.argv.get("path_templates")}{sys.argv.get("email_init")}'
+        envioEmail=enviar_email(open(file,encoding='utf8').read())
         envioEmail.connect()
         candidato = self.get_info(candidato , lista_simples+['NO_MAE'])
         if not candidato:
@@ -249,8 +250,8 @@ class usuario:
 
     @validar_token
     def upload_csv(self,data):
-        global all_candidatos
-        if exists('./cantidatos.csv'):
+        global all_candidatos 
+        if exists(f"{sys.argv.get('path_csv')}{sys.argv.get('file')}"):
             if data.get('pwd') != self.pwd:
                 return {'response': False, 'msg': 'erro na senha pois arquivo já existe'}
         file=data['file']
@@ -306,7 +307,8 @@ class usuario:
                 inscrito['MENSAGEM']=''
                 if texto:
                     inscrito['MENSAGEM']=texto.replace('\n','\n<br>')
-                envio=enviar_email(open('./templates/reset.html',encoding='utf8').read())
+                file=f'{sys.argv.get("path_templates")}{sys.argv.get("indeferido")}'
+                envio=enviar_email(open(file,encoding='utf8').read())
                 envio.connect()
                 envio.format_texto(inscrito)
                 try:
@@ -408,9 +410,32 @@ class usuario:
             return {'resopnse':True, 'msg':'ok'}
         return {'response':False, 'msg':'arquivo não é .CSV'}
 
-    def conf_template_email(self, data):
-        if data.get('acao') == 'listar':
-            return {'response': True, 'files':listdir('./templates/')}
+    @validar_token
+    def alter_templates(self, data):
+        acao=data.get('acao')
+        if  acao== 'listar':
+            l=listdir(sys.argv.get('path_templates'))
+            l.remove('doc.html')
+            return {'response': True, 'files':l}
+        elif acao == 'tags':
+            return {'response': True, 'tags':'kkk'}   ## continue
+        elif acao == 'edit':
+            texto=data.get('texto')
+            file=data.get('file')+'.html'
+            l=listdir(sys.argv.get('path_templates'))
+            l.remove('doc.html')
+            if file in listdir(sys.argv.get('path_templates')):
+                with open(file) as file:
+                    file.write(texto)
+                    file.close()
+                    return {'response': True, 'msg':'texto edidato'}
+            else:
+                return {'response': False, 'msg':f'{file[:-5]} não é um template'}
+    
+    @validar_token
+    def revog_matricula(self, data):
+        cpf=data.get('cpf')
+        pass
 
     
     def rankear(self):

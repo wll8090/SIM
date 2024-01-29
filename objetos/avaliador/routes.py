@@ -88,9 +88,12 @@ def rotas(app ):
             elif acao == 'autenticar':                  ## autanticar candidato
                 re=users_logado[key].autenticar(data)
             
-            elif acao == 'get_dados_inscrito':                  ## rtornar dados do inscriot pelo cpf
+            elif acao == 'get_dados_inscrito':                  ## retornar dados do inscriot pelo cpf
                 re=users_logado[key].get_dados_inscrito(data)
-            
+
+            elif acao == 'alter_templates':                  ## retornar e modifica os templates de e-mail
+                re=users_logado[key].alter_templates(data)     
+
             elif acao == 'relatorio_matriculados':                  ## gerar o relatorio de matricula e deixa disponivel em /file?token=token
                 re=users_logado[key].relatorio_matriculados(data)
                 print(re)

@@ -15,7 +15,7 @@ def login(data):
            "PWD": sha256(data.get('pwd').encode()).hexdigest() }
     re=consultar_usuario(dados)     ## consulta no banco
     if re:
-        user=cantidato( data.get('cpf'), data.get('pwd'), data.get('email'), data.get('ip'))
+        user=cantidato( dados['NU_CPF_INSCRITO'], data.get('pwd'), data.get('email'), data.get('ip'))
         if user.login():
             candidato_logado[user.ip]=user
             re={'response': True ,'ip':user.ip}

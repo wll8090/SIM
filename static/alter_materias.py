@@ -25,7 +25,7 @@ def get_materias():
     return materias
 
 get_var = lambda v: sys.argv[v]
-montpath = lambda file: f'./{get_var("path_csv")}/{get_var("chamada")}_{file}'
+montpath = lambda file: f'{get_var("path_csv")}{get_var("chamada")}_{file}'
 
 if exists(montpath(get_var('csv_vagas_materias'))):
     load_materias()

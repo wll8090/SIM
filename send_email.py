@@ -1,6 +1,7 @@
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
+import sys
 
 
 server='smtp.gmail.com'
@@ -10,7 +11,7 @@ email='sistemas@ufnt.edu.br'
 key_app="btxwkxcngpmkeuhs"
 encode='utf-8'
 
-roda_pe='./templates/roda_pe.html'
+roda_pe=f"{sys.argv.get('path_templates')}{sys.argv.get('roda_pe')}"
 roda_pe=open(roda_pe, encoding = encode).read()
 
 class enviar_email:

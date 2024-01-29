@@ -92,7 +92,7 @@ new_column={
 
 seq=seq_de_chamada()
 
-montpath=lambda file: f'./{get_var("path_csv")}/{get_var("chamada")}_{file}'
+montpath=lambda file: f'{get_var("path_csv")}{get_var("chamada")}_{file}'
 
 get_var = lambda v: sys.argv[v]
 

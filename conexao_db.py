@@ -107,3 +107,5 @@ def __consuta(cursor, cpf):
 
 
 
+if __name__ == '__main__':
+    criar_db({})

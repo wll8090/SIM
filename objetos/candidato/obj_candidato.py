@@ -91,7 +91,7 @@ class cantidato:
                 merge.append(BytesIO(ff.read()))
             else:
                 text+=file+', '
-        merge.write(f'./docs/{self.cpf:0>11}.pdf')
+        merge.write(f'{sys.argv.get("path_docs")}{self.cpf:0>11}.pdf')
         self.__alter__('DADOS_CONFIRMADOS','S')
         self.__alter__('NU_PROCESSO','4')
         self.__alter__('SEM_PDF',text)
@@ -122,9 +122,9 @@ class cantidato:
     def modelo_doc(self, data):
         file=data.get('file')
         if file=='all':
-            return  {'response':True,'lista':listdir('./modelo_docs')}
+            return  {'response':True,'lista':listdir(sys.argv.get("docs_modelos"))}
         else: 
-            file=f'./modelo_docs/{file}'
+            file=f'{sys.argv.get("docs_modelos")}{file}'
             if exists(file):
                 return file
             return {'resposne':False,'msg':'arquivo não encontrado'}
