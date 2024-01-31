@@ -28,7 +28,7 @@ def decora(funk):   #decorador para conexão do banvo BANCO_SIM    inicia e fech
 @decora
 def criar_db(cursor, conn ,data):
     if cursor == 0:
-        return 'erro na cone'
+        return 'erro na conexão com DB'
     criar_banco=f'''
 create database IF NOT EXISTS {database} character set utf8 collate utf8_general_ci;
 '''
@@ -42,12 +42,14 @@ DS_EMAIL VARCHAR(50),
 DT_NASCIMENTO  VARCHAR(20),
 PWD VARCHAR(64) NOT NULL
 );'''
-    try:
-        cursor.execute(criar_banco)
-        cursor.execute(create_table_login)
-        conn.commit()
-        return True
-    except: return False
+
+    cursor.execute(criar_banco)
+    print(f'banco "{database}" criado')
+    cursor.execute(create_table_login)
+    print(f'tabela "{tabela_candidato}" criado')
+    conn.commit()
+    print('processo realizado com sucesso!\nde nada !')
+
 
 @decora
 def drop_db(cursor, conn ,data):

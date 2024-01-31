@@ -12,12 +12,13 @@ def login(data,IO):
     if not 'user' in data:
         return {"response":False, 'msg':"erro no HTML"}
     login=data.get('user')
-    ip=data.get('ip')
+    #ip=data.get('ip')
+    ip=request.headers.get('meu-ip-real-telvez-seja').split(',')[0]
     pwd=data.get('pwd')
     user=usuario(login, pwd, ip, IO)
     if user.login():
         users_logado[login]=user
-        return {"response":True, 'msg':"usuario logado", 'token':user.token,'csv':exists('./candidatos.csv')}
+        return {"response":True, 'msg':"usuario logado", 'token':user.token,'csv':exists('./candidatos.csv'),'ip':f'{ip}'}
     return {"response":False, 'msg':"erro no login"}
 
 def all_data(req):

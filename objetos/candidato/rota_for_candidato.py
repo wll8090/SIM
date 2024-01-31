@@ -45,7 +45,8 @@ def creat_rotas(app):  ## rotas para os candidatos
     @app.route('/matricula/<candidato>/<acao>', methods=['POST','GET'])
     def init_req(candidato, acao):
         data=all_data(request)
-        ip=request.remote_addr
+        #ip=request.remote_addr
+        ip=request.headers.get('meu-ip-real-telvez-seja').split(',')[0]
 
         if request.method=='GET':
             if acao == 'modelo_docs':
@@ -94,6 +95,7 @@ def creat_rotas(app):  ## rotas para os candidatos
                 return abort(404)
 
         else: re= {'response':False,'msg':'precisa fazer login'}
+        re['ip']=ip
         return jsonify(re)
     
 
