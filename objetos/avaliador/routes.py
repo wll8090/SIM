@@ -92,7 +92,10 @@ def rotas(app ):
                 re=users_logado[key].get_dados_inscrito(data)
 
             elif acao == 'alter_templates':                  ## retornar e modifica os templates de e-mail
-                re=users_logado[key].alter_templates(data)     
+                re=users_logado[key].alter_templates(data)
+
+            elif acao == 'revog_matricula':                  ## retornar e modifica os templates de e-mail
+                re=users_logado[key].revog_matricula(data)       
 
             elif acao == 'relatorio_matriculados':                  ## gerar o relatorio de matricula e deixa disponivel em /file?token=token
                 re=users_logado[key].relatorio_matriculados(data)

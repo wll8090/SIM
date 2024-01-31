@@ -4,6 +4,8 @@ from objetos.candidato.obj_candidato import cantidato
 from conexao_db import  consultar_usuario
 from hashlib import sha256
 from os.path import exists
+from .get_acesso import acesso
+import sys
 
 candidato_logado={}
 
@@ -35,18 +37,31 @@ def all_data(req):
 
 #####  endoint  --------------------------
 def creat_rotas(app):  ## rotas para os candidatos
-    if exists('./static/1_candidatos.csv'):
+    if exists(f'{sys.argv.get("path_csv")}1_candidatos.csv'):
         login({"pwd":"1010",
         "email":"jvapgold@gmail.com", 
         "cpf":"5765767354",'ip':'192.168.40.102'})
-    @app.route('/matricula/<candidato>/<acao>', methods=['POST'])
+
+    @app.route('/matricula/<candidato>/<acao>', methods=['POST','GET'])
     def init_req(candidato, acao):
         data=all_data(request)
         ip=request.remote_addr
 
+        if request.method=='GET':
+            if acao == 'modelo_docs':
+                data['file']=request.args['file']
+                re=candidato_logado[ip].modelo_doc(data)
+                if type(re) == str:
+                    return send_file(re)
+
+            return abort(404)
+
 
         if candidato == 'login':   
             re=login(data)
+        
+        elif candidato == 'get_acesso':   
+            re=acesso(data)
         
         elif ip in candidato_logado:
             if acao == 'send_dados':
@@ -67,9 +82,6 @@ def creat_rotas(app):  ## rotas para os candidatos
             
             elif acao == 'modelo_docs':
                 re=candidato_logado[ip].modelo_doc(data)
-                if type(re) == str:
-                    print('kkkkkkkkkkk')
-                    return send_file(re)
             
             elif acao == 'sair':
                 re=candidato_logado[ip].sair(data)

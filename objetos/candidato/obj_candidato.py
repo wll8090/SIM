@@ -26,6 +26,7 @@ class cantidato:
         self.cpf=cpf
         self.ip=ip
         self.index=data_filtro(f'NU_CPF_INSCRITO =="{self.cpf}"').index[0]
+        self.meus_docs=docs
     
     def __alter__(self, campo, valor):
         alter_inscrito(self.index, campo, valor)
@@ -39,6 +40,9 @@ class cantidato:
         self.token='1001'  #sha256(f'{datetime.now().strftime("%d-%m-%Y")}--{self.ip}--{n}').hexdigest()
         self.dados=data_filtro(f'index == {self.index}')
         self.user=self.dados.get('NO_INSCRITO')
+        s=self.dados['TP_SEXO'].tolist()[0]
+        if s=='M':
+            self.meus_docs.insert(9,'*resevista')
         return True
     
     def my_dados(self):
@@ -79,13 +83,13 @@ class cantidato:
             return {'response':False,'msg':'arquivo ja foi salvo'}
         elif v == 'N':
             return {'response':False,'msg':'validar dados primeiro'}
-        pdf=all([data['files'][i].mimetype=='application/pdf' for i in docs if data['files'].get(i) != None])
+        pdf=all([data['files'][i].mimetype=='application/pdf' for i in self.meus_docs if data['files'].get(i) != None])
         if not pdf:
             return {'response':False,'msg':'algum arquivo não é .pdf'}
         
         merge=PdfMerger()
         text=''
-        for file in docs:
+        for file in self.meus_docs:
             ff=data['files'].get(file)
             if ff:
                 merge.append(BytesIO(ff.read()))
@@ -116,7 +120,7 @@ class cantidato:
     
     @validar_token
     def meu_pdf(self,data):
-        return {'response':'True','lista':docs}
+        return {'response':'True','lista':self.meus_docs}
     
     @validar_token
     def modelo_doc(self, data):
@@ -205,11 +209,10 @@ lista_de_valores=[
 docs=['*Frente do RG',
       '*Costa do RG',
       '*CPF',
-      '*Cestição de nascimento',
+      '*Certição de nascimento ou casamento',
       'Comprovante do estado civil',
       '*Comprovante de residencia',
       '*Certidão de quitacao eleitoral',
-      'Resevista',
       '*Certificado de conclusão do ensino médio',
       'Declaração de estudos em escolas públicas',
       '*Histórico escolardo ensino médio',
@@ -217,5 +220,5 @@ docs=['*Frente do RG',
       'Declaração de composisão famíliar',
       'Termo de responsabilidade e veracidade das informações',
 
-      'outros'
+      #'outros'
       ]

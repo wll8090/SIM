@@ -8,7 +8,7 @@ server='smtp.gmail.com'
 port=587
 
 email='sistemas@ufnt.edu.br'
-key_app="btxwkxcngpmkeuhs"
+key_app="dvpp rdwy wkfg keqr"
 encode='utf-8'
 
 roda_pe=f"{sys.argv.get('path_templates')}{sys.argv.get('roda_pe')}"

@@ -3,29 +3,33 @@ from os.path import exists
 import sys
 
 
+file=f'{sys.argv.get("path_csv")}{sys.argv.get("csv_vagas_materias")}'
+
 def write_materias():
     global materias
-    with open(montpath(get_var('csv_vagas_materias')) ,'w', encoding='utf-8') as mat:
+    with open(file ,'w', encoding='utf-8') as mat:
         mat.write(dumps(materias, indent=4, ensure_ascii=False))
         mat.close()
 
 def load_materias():
     global materias
-    file=montpath(get_var('csv_vagas_materias'))
     with open(file,'r',encoding='utf-8') as mat:
         materias=loads(mat.read())
     
-def alter_materias(curso, modalidade):
-    new=materias.get(curso).get(modalidade)-1
-    materias[curso][modalidade]=new
+def alter_materias(curso, modalidade, q=-1):
+    max=materias.get(curso).get(modalidade)[0]
+    new=materias.get(curso).get(modalidade)[1]+q
+    if new>max:
+        return('maximo de vaga')
+    elif new < 0:
+        return('todas as vagas ocupadas')
+    materias[curso][modalidade][1]=new
     write_materias()
 
 
 def get_materias():
     return materias
 
-get_var = lambda v: sys.argv[v]
-montpath = lambda file: f'{get_var("path_csv")}{get_var("chamada")}_{file}'
 
-if exists(montpath(get_var('csv_vagas_materias'))):
+if exists(file):
     load_materias()

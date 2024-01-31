@@ -31,7 +31,7 @@ sys.argv={
 "fim_das_matriculas" : "" ,
 "file" : "candidatos.csv" ,
 "path_csv" : "./static/" ,
-"csv_vagas_materias" : "vaga_materias.csv" ,
+"csv_vagas_materias" : "vaga_materias.json" ,
 "csv_lista_espera" : "lista_espera.csv" ,
 "csv_chamada" : "chamada.csv" ,
 "chamada" : '1',

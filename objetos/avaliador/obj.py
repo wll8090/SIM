@@ -13,9 +13,11 @@ from threading import Thread, active_count
 from time import sleep
 from static.alter_materias import *
 from . import rankear
+from json import loads, dumps
 
-import sys
 import csv
+import pandas as pd 
+import sys
 import io
 
 
@@ -257,8 +259,18 @@ class usuario:
         file=data['file']
         if file.filename.endswith('.csv'):
             txt=io.StringIO(file.read().decode('latin-1').encode('utf8').decode().replace('"',''))  # converte para UTF-8 e salva em cache
-            data=list(csv.reader(txt, delimiter='\t'))
-            coluna = data.pop(0)[:-4] + list('1234')    # para as 4 ultimas colunas sem nome
+            a=list(txt.readlines())
+            head=a.pop(0)
+            #head=head.replace(';','')
+            head=head.replace(',',';')
+            a.insert(0,head)
+            text=''.join(a)
+            with open('tempore.csv', 'wb') as arq:
+                arq.write(text.encode('latin-1'))
+            
+            with open('tempore.csv' ,'r' ,encoding='utf-8') as arq:
+                data=list(csv.reader(arq, delimiter=';'))
+            coluna = data.pop(0)    # para as 4 ultimas colunas sem nome
             gerar_data_frame(data, coluna)
             load_materias()
             
@@ -271,12 +283,12 @@ class usuario:
     def autenticar(self, data):
         reload_candidatos()
         def listar(data):  # ()
-            lista=['NO_INSCRITO','NU_CPF_INSCRITO','DS_EMAIL']
+            lista=['NO_INSCRITO','NU_CPF_INSCRITO','DS_EMAIL','DADOS_ALTENTICADOS']
             dd=data_filtro('DADOS_CONFIRMADOS == "S"')
             return {'response': True, 'inscritos':self.__to_dict(dd,lista) , 'quantia':len(dd)}
 
         def ver(data):  #(cpf )
-            file=f'./docs/{cpf:0>11}.pdf'
+            file=f'{sys.argv.get("path_docs")}{cpf:0>11}.pdf'
             if not exists(file):
                 return {'response':False, 'msg':'arquivo não encontrado'}
             self.dados_inscrito['file']=file
@@ -343,8 +355,7 @@ class usuario:
                 alter_materias(v['NO_CURSO'],v['NO_MODALIDADE_CONCORRENCIA'])
                 data={'DADOS_ALTENTICADOS':'S',
                       'MATRICULA':'DEFERIDO',
-                      'FALTA_DOCS':falta_doc,
-                      'RASTRO_ANALISADOR':self.nome}
+                      'FALTA_DOCS':falta_doc,}
                 self.__alter__(index, data)
                 return {'response':True, 'msg':'dados atualizados e autenticados'}
             
@@ -393,7 +404,7 @@ class usuario:
 
             file=f'./{sys.argv("csv_matriculados")}'
             dd=dd.assign(MATRICULA_APROVADA='S')
-            dd[colunas_csv+['MATRICULA_APROVADA']].to_csv(file, sep='\t', index=0, encoding='utf-8')
+            dd[colunas_csv+['MATRICULA_APROVADA']].to_csv(file, sep=';', index=0, encoding='utf-8')
             token='1011' #sha256(f'{randint(10**20,10**21):X}'.encode()).hexdigest()   <<<------token de send file
             self.token_file[token]=file
             return {'response': True, 'token': token }
@@ -404,7 +415,7 @@ class usuario:
         file=data['file']
         if file.filename.endswith('.csv'):
             txt=io.StringIO(file.read().decode('latin-1').encode('utf8').decode().replace('"',''))  # converte para UTF-8 e salva em cache
-            data=list(csv.reader(txt, delimiter='\t'))
+            data=list(csv.reader(txt, delimiter=';'))
             coluna = data.pop(0)[:-4] + list('1234')    # para as 4 ultimas colunas sem nome
             gerar_data_frame(data, coluna)
             return {'resopnse':True, 'msg':'ok'}
@@ -434,10 +445,30 @@ class usuario:
     
     @validar_token
     def revog_matricula(self, data):
-        cpf=data.get('cpf')
-        pass
+        cpf=int(data.get('cpf'))
+        files=[i for i in listdir(f"{sys.argv.get('path_csv')}") if i.endswith(sys.argv.get('csv_chamada')[4:])]
+        for file in files:
+            dd=pd.read_csv(f'{sys.argv.get("path_csv")}{file}',sep=';')
+            v=dd.query(f'NU_CPF_INSCRITO == {cpf}')
+            if v.empty:
+                continue
+            else:
+                chamada=file.split('_')[0]
+                file=f'{sys.argv.get("path_csv")}{chamada}_{sys.argv.get("file")}'
+                data=pd.read_csv(file,sep=';')
+                inscrito=data.query(f'NU_CPF_INSCRITO == {cpf}')
+                index=inscrito.index.tolist()[0]
+                curso,modalidade=inscrito[['NO_CURSO','NO_MODALIDADE_CONCORRENCIA']].values.tolist()[0]
+                v=data.loc[index,'MATRICULA']
+                if v=='S':
+                    return {'response':False,'msg':'inscrito não matriculado'}
+                data.loc[index,'MATRICULA']='N'
+                data.loc[index,'RASTRO_ANALISADOR']=self.nome
+                alter_materias(curso, modalidade , +1)
+                return {'response':True,'msg':f'vaga liberada em {curso} {modalidade}'}
+                
+        return {'response':False,'msg':'cpf não encontrado'}
 
-    
     def rankear(self):
         return rankear.rankeamento()
     

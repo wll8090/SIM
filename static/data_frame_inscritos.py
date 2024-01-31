@@ -5,45 +5,49 @@ import csv
 from json import dumps, loads
 
 from os import path
+from os.path import exists
 import sys
 
 
 def gerar_data_frame(data, coluna):
-    global all_candidatos
+    global all_candidatos ,seq
+    next(seq)
     data=pd.DataFrame(data, columns=coluna)
-    # new columns
-    all_candidatos=data.assign(**new_column)
+    all_candidatos=data.assign(**new_column)  # new columns
     file=montpath(get_var('file'))
-    all_candidatos.to_csv( file, sep='\t', index=0, encoding='utf-8')
+    all_candidatos.to_csv( file, sep=';', index=0, encoding='utf-8')
+
+    file=f'{sys.argv.get("path_csv")}{sys.argv.get("chamada")}_{sys.argv.get("csv_chamada")}'
+    all_candidatos[['NU_CPF_INSCRITO','NO_CURSO']].to_csv(file, encoding='utf-8',sep=';')
     cursos=all_candidatos.NO_CURSO.unique().tolist()
     d={}
     for i in cursos:
         dados=all_candidatos.query(f'NO_CURSO == "{i}"')[['NO_MODALIDADE_CONCORRENCIA','QT_VAGAS']].drop_duplicates().values
         l=[]
         for j,n in list(dados):
-            l.append([j, int(n)])
-        d.update({i:dict(l)})    
-    with open(montpath(get_var('csv_vagas_materias')),'w',encoding='utf-8') as mat:
-        mat.write(dumps(d, indent=4, ensure_ascii=False))
-        mat.close()
+            l.append([j, [int(n),int(n)]])
+        d.update({i:dict(l)})
+    file=f'{sys.argv.get("path_csv")}{sys.argv.get("csv_vagas_materias")}'
+    if not exists(file):
+        with open(file,'w',encoding='utf-8') as mat:
+            mat.write(dumps(d, indent=4, ensure_ascii=False))
+            mat.close()
+    
 
 def seq_de_chamada():
     for i in range(1,20):
-        sys.argv['chamada'][0]=str(i)
+        sys.argv['chamada']=str(i)
         yield i
 
     
 def salvar_cahamda(data='F'):
-    global seq
-    
     ll=['NU_CPF_INSCRITO','MATRICULA']
-    att={'index':0,'sep':'\t'}
-    file=montpath(get_var('csv_chamada'))
+    att={'index':0,'sep':';'}
+    file=f'{sys.argv.get("path_csv")}{sys.argv.get("csv_chamada")}'
     if type(data) == str:
         all_candidatos[ll].to_csv(file,**att)
     else:
         data[ll].to_csv(file,**att)
-    next(seq)
     return True
 
 
@@ -65,12 +69,12 @@ def reload_candidatos(valor=0):
     if not path.exists(file):
         return False
     with open(file ,'r',encoding='utf8')   as arq:
-        ll=list(csv.reader(arq, delimiter='\t'))
+        ll=list(csv.reader(arq, delimiter=';'))
         all_candidatos=pd.DataFrame(ll[1:], columns=ll[0])
     return True
 
 def salvar_csv():
-    all_candidatos.to_csv(montpath(get_var('file')) ,sep='\t',index=0)
+    all_candidatos.to_csv(montpath(get_var('file')) ,sep=';',index=0)
 
 def get_data_frame():
     return all_candidatos
