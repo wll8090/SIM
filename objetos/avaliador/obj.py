@@ -212,7 +212,7 @@ class usuario:
         salvar_csv()
         self.enviar_sok('reload')
         return 1
-        
+        Falaaa.json
 
     @validar_token
     def enviar_email(self, data):                                              # aqui preprapa a o envio do email

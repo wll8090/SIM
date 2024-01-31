@@ -12,8 +12,8 @@ def login(data,IO):
     if not 'user' in data:
         return {"response":False, 'msg':"erro no HTML"}
     login=data.get('user')
-    #ip=data.get('ip')
-    ip=request.headers.get('meu-ip-real-telvez-seja').split(',')[0]
+    ip=data.get('ip')
+    print(request.__dir__())
     pwd=data.get('pwd')
     user=usuario(login, pwd, ip, IO)
     if user.login():
@@ -25,7 +25,8 @@ def all_data(req):
     if request.data:
         data=request.json
     else: data={}
-    data['ip']=request.remote_addr
+    ip=request.headers.get('meu-ip-real-telvez-seja').split(',')[0]
+    data['ip']=ip  #request.remote_addr
     beare=request.headers.get('Authorization')
     data['Bearer']=None
     if beare:
