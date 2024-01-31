@@ -13,7 +13,6 @@ def login(data,IO):
         return {"response":False, 'msg':"erro no HTML"}
     login=data.get('user')
     ip=data.get('ip')
-    print(request.__dir__())
     pwd=data.get('pwd')
     user=usuario(login, pwd, ip, IO)
     if user.login():
