@@ -16,7 +16,7 @@ def login(data,IO):
     pwd=data.get('pwd')
     user=usuario(login, pwd, ip, IO)
     if user.login():
-        users_logado[login]=user
+        users_logado[f'{login}-{ip}']=user
         return {"response":True, 'msg':"usuario logado", 'token':user.token,'csv':exists('./candidatos.csv'),'ip':f'{ip}'}
     return {"response":False, 'msg':"erro no login"}
 
@@ -24,9 +24,9 @@ def all_data(req):
     if request.data:
         data=request.json
     else: data={}
+    ip=request.remote_addr
     #ip=request.headers.get('meu-ip-real-telvez-seja').split(',')[0]
-    ip='1010'
-    data['ip']=ip  #request.remote_addr
+    data['ip']=ip  
     beare=request.headers.get('Authorization')
     data['Bearer']=None
     if beare:
@@ -45,8 +45,8 @@ def rotas(app ):
     def ola():
         print('kkkkkkkk')
 
-    login({'user':'sergio.ti','ip':'192.168.40.102','pwd':'@Aa1020'}, IO)
-    login({'user':'luis.ti','ip':'192.168.41.8','pwd':'@Aa1020'} , IO)
+    #login({'user':'sergio.ti','ip':'192.168.40.102','pwd':'@Aa1020'}, IO)
+    #login({'user':'luis.ti','ip':'192.168.41.8','pwd':'@Aa1020'} , IO)
 
     @app.route('/<key>/<acao>/<args>', methods=['post', 'get'])   #### rotas do sitema
     def rotas(key, acao, args):
@@ -69,7 +69,8 @@ def rotas(app ):
             re=login(data, IO)
         
         ################# para usuarios de coordenação ja logado
-        elif key in users_logado:             
+        elif f'{key}-{data["ip"]}' in users_logado:
+            key=f'{key}-{data["ip"]}'             
             if acao=='upcsv':                           ## para enviar csv
                 data['file']=request.files['filecsv']   ## recebe o .csv
                 re=users_logado[key].upload_csv(data)

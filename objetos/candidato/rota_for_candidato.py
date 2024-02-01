@@ -28,8 +28,9 @@ def login(data):
 
 def all_data(req):
     data=loads(req.data) if req.data else {}
+    ip=request.remote_addr
     ip=request.headers.get('meu-ip-real-telvez-seja').split(',')[0]
-    data['ip']=ip  #req.remote_addr
+    data['ip']=ip
     Berare=req.headers.get('Authorization')
     if Berare:
         data['Bearer']=Berare.split()[-1]
@@ -42,7 +43,7 @@ def creat_rotas(app):  ## rotas para os candidatos
     @app.route('/matricula/<candidato>/<acao>', methods=['POST','GET'])
     def init_req(candidato, acao):
         data=all_data(request)
-        ip=request.headers.get('meu-ip-real-telvez-seja').split(',')[0]
+        ip=data['ip']
 
         if request.method=='GET':
             if acao == 'modelo_docs':
