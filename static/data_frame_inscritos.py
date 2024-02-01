@@ -12,7 +12,12 @@ import sys
 def gerar_data_frame(data, coluna):
     global all_candidatos ,seq
     next(seq)
-    data=pd.DataFrame(data, columns=coluna)
+    if coluna=='file':
+        data=pd.read_csv(f'./{data}',sep=';')
+        print(data)
+        print(data.columns)
+    else:
+        data=pd.DataFrame(data, columns=coluna)
     all_candidatos=data.assign(**new_column)  # new columns
     file=montpath(get_var('file'))
     all_candidatos.to_csv( file, sep=';', index=0, encoding='utf-8')
@@ -22,7 +27,7 @@ def gerar_data_frame(data, coluna):
     cursos=all_candidatos.NO_CURSO.unique().tolist()
     d={}
     for i in cursos:
-        dados=all_candidatos.query(f'NO_CURSO == "{i}"')[['NO_MODALIDADE_CONCORRENCIA','QT_VAGAS']].drop_duplicates().values
+        dados=all_candidatos.query(f'NO_CURSO == "{i}"')[['NO_MODALIDADE_CONCORRENCIA','QT_VAGAS_CONCORRENCIA']].drop_duplicates().values
         l=[]
         for j,n in list(dados):
             l.append([j, [int(n),int(n)]])

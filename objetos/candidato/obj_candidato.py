@@ -186,7 +186,7 @@ lista_de_valores=[
             #'NU_NOTA_R', 
             'NU_RG',
             #'QT_BONUS_PERC',
-            #'QT_VAGAS', 
+            #'QT_VAGAS_CONCORRENCIA', 
             'SG_UF_INSCRITO', 
             #'ST_BONUS_PERC', 
             #'ST_OPCAO',

@@ -38,10 +38,6 @@ def all_data(req):
 
 #####  endoint  --------------------------
 def creat_rotas(app):  ## rotas para os candidatos
-    if exists(f'{sys.argv.get("path_csv")}1_candidatos.csv'):
-        login({"pwd":"1010",
-        "email":"jvapgold@gmail.com", 
-        "cpf":"5765767354",'ip':'192.168.40.102'})
 
     @app.route('/matricula/<candidato>/<acao>', methods=['POST','GET'])
     def init_req(candidato, acao):

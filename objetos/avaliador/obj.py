@@ -147,7 +147,7 @@ class usuario:
         file=f'{sys.argv.get("path_templates")}{sys.argv.get("email_init")}'
         envioEmail=enviar_email(open(file,encoding='utf8').read())
         envioEmail.connect()
-        candidato = self.get_info(candidato , lista_simples+['NO_MAE'])
+        candidato = self.get_info(candidato , lista_completa)
         if not candidato:
             print(f'erro {candidato}')
             self.erro_brutal.append(candidato)
@@ -170,6 +170,9 @@ class usuario:
         
         try:
             #########################################
+            if '@' not in destino:
+                self.__alter__(index,{'EMAIL_ENVIADO':'E'})
+                return False
             envioEmail.disparo(destino,'Aprovação na graduação')   # envia email   << ----- envia email
             print(f'enviada para {destino}')
             envioEmail.desconect()
@@ -193,7 +196,7 @@ class usuario:
         cont=0
         q=len(lista_de_espera)
         while th0.is_alive() or len(lista_de_espera) > 0:
-            if cont == 10:
+            if cont == 20:
                 print('breakoo')
                 break
             print('esperando para salvar no BANCO_SIM')
@@ -258,20 +261,22 @@ class usuario:
                 return {'response': False, 'msg': 'erro na senha pois arquivo já existe'}
         file=data['file']
         if file.filename.endswith('.csv'):
-            txt=io.StringIO(file.read().decode('latin-1').encode('utf8').decode().replace('"',''))  # converte para UTF-8 e salva em cache
-            a=list(txt.readlines())
+            print(file.__dir__())
+            nome_csv='./tempore.csv'
+            file.save(nome_csv)
+            
+            '''a=list(txt.readlines())
             head=a.pop(0)
             #head=head.replace(';','')
             head=head.replace(',',';')
             a.insert(0,head)
             text=''.join(a)
-            with open('tempore.csv', 'wb') as arq:
-                arq.write(text.encode('latin-1'))
             
             with open('tempore.csv' ,'r' ,encoding='utf-8') as arq:
                 data=list(csv.reader(arq, delimiter=';'))
             coluna = data.pop(0)    # para as 4 ultimas colunas sem nome
-            gerar_data_frame(data, coluna)
+            print(coluna)'''
+            gerar_data_frame(nome_csv, coluna='file')
             load_materias()
             
             return {'response': True, 'msg': 'Arquivo CSV salvo'}
@@ -520,7 +525,7 @@ colunas_csv=[
     'NO_CURSO', 
     'DS_TURNO',
     'DS_FORMACAO', 
-    'QT_VAGAS', 
+    'QT_VAGAS_CONCORRENCIA', 
     'CO_INSCRICAO_ENEM', 
     'NO_INSCRITO',
     'NO_SOCIAL', 
