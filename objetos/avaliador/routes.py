@@ -123,16 +123,6 @@ def rotas(app ):
     @app.route('/doc/')   ## rota de documentação
     def doc():
         return render_template('doc.html')
-    
-    @app.route('/index/')   ## rota de documentação
-    def index():
-        return render_template('index.html')
-    
-    
-    @app.route('/get_vars/')
-    def get():
-        return jsonify(sys.argv)
-    
         
 
     return IO

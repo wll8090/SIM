@@ -7,6 +7,7 @@ from json import dumps, loads
 from os import listdir 
 from os.path import exists
 import sys
+import load_sys
 
 
 def gerar_data_frame(file):
@@ -44,11 +45,11 @@ def seq_de_chamada():
     l=[i.split('_')[0] for i in l if i.endswith(sys.argv.get('file'))]
     if len(l)>0:
         v=max([int(i) for i in l])
-        sys.argv['chamada']=f'{v+1}'
+        load_sys.set_sys('chamada',f'{v+1}')
     else:
-        sys.argv['chamada']='1'
-
+        load_sys.set_sys('chamada','1')
     
+
 def salvar_cahamda(data='F'):
     ll=['NU_CPF_INSCRITO','MATRICULA']
     att={'index':0,'sep':';'}

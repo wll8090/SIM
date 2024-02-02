@@ -1,4 +1,6 @@
 from conf import *
+import load_sys
+load_sys.load_sys()
 from flask import Flask
 from objetos.avaliador.routes import rotas
 from objetos.candidato.rota_for_candidato import creat_rotas

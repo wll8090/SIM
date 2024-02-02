@@ -19,6 +19,7 @@ import csv
 import pandas as pd 
 import sys
 import io
+import load_sys
 
 
 
@@ -268,7 +269,7 @@ class usuario:
             file.save(nome_csv)
             gerar_data_frame(nome_csv)
             load_materias()
-            sys.argv['chamada_1']=True
+            load_sys.set_sys('chamada_1',True)
             return {'response': True, 'msg': 'Arquivo CSV salvo'}
         else:
             return {'response': False, 'msg': 'Apenas formato .CSV'}
@@ -477,7 +478,7 @@ class usuario:
         return rankear.rankeamento()
     
     def get_var(self):
-        sys.argv['valor']=1000
+        load_sys.set_sys('valor', 1000)
         return {'a':f'{sys.argv}'}
 
 

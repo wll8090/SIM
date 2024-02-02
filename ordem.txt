@@ -1,8 +1,0 @@
-A ordem de migração discutida: Ordem de migração N. 01
-LB_PPI > LB_Q > LB_PCD > LI_PPI > LI_Q > LI_PCD > LB_EP > LI_EP > AC
-LB_Q > LB_PPI > LB_PCD > LI_PPI > LI_Q > LI_PCD > LB_EP > LI_EP > AC
-LB_PCD > LB_PPI > LB_Q > LI_PPI > LI_Q > LI_PCD > LB_EP > LI_EP > AC
-LI_PPI > LB_PPI > LB_Q > LB_PCD > LI_Q > LI_PCD > LB_EP > LI_EP > AC
-LI_Q > LB_PPI > LB_Q > LB_PCD > LI_PPI > LI_PCD > LB_EP > LI_EP > AC
-LI_PCD > LB_PPI > LB_Q > LB_PCD > LI_PPI > LI_Q > LB_EP > LI_EP > AC
-LB_EP > LB_PPI > LB_Q > LB_PCD
