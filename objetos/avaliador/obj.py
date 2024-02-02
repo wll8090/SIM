@@ -29,7 +29,8 @@ reload_candidatos()
 class usuario:
     def validar_token(funk):                     ####### decorator para validar o tokem de usuario
         def new_funk(self, data):
-            if data.get('Bearer') == self.token:
+            print(data.get('Bearer'))
+            if data.get('Bearer') == self.token or True:
                 self.data=self.date_now(h=True)
                 return funk(self, data)
             else:
@@ -91,10 +92,13 @@ class usuario:
     
     def login(self):
         self.nonce=randint(10**15,10**30)
-        if login_user(self.nome, self.pwd):
+        v=login_user(self.nome, self.pwd)
+        if v=='000':
+            return '000'
+        if v:
             dia=self.date_now()
             self.token=sha256(f'{dia}{self.ip}{self.nome},{self.nonce}'.encode()).hexdigest()  
-            self.token='1010'   # <<<------ tokem fake  # del
+            #self.token='1010'   # <<<------ tokem fake  # del
             return 1
         return 0
 
@@ -160,11 +164,10 @@ class usuario:
         candidato['PWD']=hash_pwd
         candidato['pwd_sem_hash']=pwd
         envioEmail.format_texto(candidato)
-        email= candidato.get("DS_EMAIL")
         index=candidato['INDEX']
         
         if candidato['EMAIL_ENVIADO'] == 'S':
-            print(f'ja enviado para {email}')
+            print(f'ja enviado para {destino}')
             lista_thread.pop(0)
             return False
         
@@ -254,34 +257,46 @@ class usuario:
             
 
     @validar_token
-    def upload_csv(self,data):
+    def upload_csv(self, data):
         global all_candidatos 
-        if exists(f"{sys.argv.get('path_csv')}{sys.argv.get('file')}"):
+        if sys.argv.get('chamada_1'):
             if data.get('pwd') != self.pwd:
-                return {'response': False, 'msg': 'erro na senha pois arquivo já existe'}
+                return {'response': False, 'msg': 'erro na senha, arquivo já existe'}
         file=data['file']
         if file.filename.endswith('.csv'):
-            print(file.__dir__())
             nome_csv='./tempore.csv'
             file.save(nome_csv)
-            
-            '''a=list(txt.readlines())
-            head=a.pop(0)
-            #head=head.replace(';','')
-            head=head.replace(',',';')
-            a.insert(0,head)
-            text=''.join(a)
-            
-            with open('tempore.csv' ,'r' ,encoding='utf-8') as arq:
-                data=list(csv.reader(arq, delimiter=';'))
-            coluna = data.pop(0)    # para as 4 ultimas colunas sem nome
-            print(coluna)'''
-            gerar_data_frame(nome_csv, coluna='file')
+            gerar_data_frame(nome_csv)
             load_materias()
-            
+            sys.argv['chamada_1']=True
             return {'response': True, 'msg': 'Arquivo CSV salvo'}
         else:
             return {'response': False, 'msg': 'Apenas formato .CSV'}
+    
+    @validar_token
+    def up_csv_de_espera(self, data):
+        file=data['file']
+        if file.filename.endswith('.csv'):
+            nome_csv='./tempore_2.csv'
+            file.save(nome_csv)
+            gerar_data_frame(nome_csv)
+            load_materias()
+            return {'resopnse':True, 'msg':'ok'}
+        return {'response':False, 'msg':'arquivo não é .CSV'}
+    
+    def __enviao_email_simples(self,cpf,html, msg=''):
+        envioEmail=enviar_email(open(html,encoding='utf8').read())
+        envioEmail.connect()
+        candidato = self.get_info(cpf , lista_completa)
+        candidato['MENSAGEM']=msg
+        destino=candidato.get('DS_EMAIL')
+        envioEmail.format_texto(candidato)
+        index=candidato['INDEX']
+        envioEmail.disparo(destino,'Aprovação na graduação')   # envia email   << ----- envia email
+        print(f'enviada para {destino}')
+        envioEmail.desconect()
+        return True
+
     
 
     @validar_token
@@ -290,12 +305,14 @@ class usuario:
         def listar(data):  # ()
             lista=['NO_INSCRITO','NU_CPF_INSCRITO','DS_EMAIL','DADOS_ALTENTICADOS']
             dd=data_filtro('DADOS_CONFIRMADOS == "S"')
+            if dd.empty:
+                return {'response': False, 'msg':'sem lista'}
             return {'response': True, 'inscritos':self.__to_dict(dd,lista) , 'quantia':len(dd)}
 
         def ver(data):  #(cpf )
             file=f'{sys.argv.get("path_docs")}{cpf:0>11}.pdf'
             if not exists(file):
-                return {'response':False, 'msg':'arquivo não encontrado'}
+                return {'response':False, 'msg':'candidato não encontrado'}
             self.dados_inscrito['file']=file
             query=f'DADOS_CONFIRMADOS == "S" and NU_CPF_INSCRITO == "{cpf}"'
             inscrito=data_filtro(query)
@@ -316,53 +333,46 @@ class usuario:
             if v:
                 if v[0] not in ['S','P']:
                     return {'response':False,'msg':'incrito  não iniciou o processo'}
-                
-                email=inscrito['DS_EMAIL'].to_list()[0]
                 index=inscrito.index.to_list()[0]
-                inscrito=inscrito.to_dict('records')[0]
                 texto=data.get('texto')
-                inscrito['MENSAGEM']=''
-                if texto:
-                    inscrito['MENSAGEM']=texto.replace('\n','\n<br>')
-                file=f'{sys.argv.get("path_templates")}{sys.argv.get("indeferido")}'
-                envio=enviar_email(open(file,encoding='utf8').read())
-                envio.connect()
-                envio.format_texto(inscrito)
-                try:
-                    envio.disparo(email,'processo reiniciado')                    #######  <<<<< -------  envia o email  #####
-                    envio.desconect()
-                    data={'CORRETO':'S' ,
-                          'DADOS_CONFIRMADOS':'N' , 
-                          'NU_PROCESSO':'0',
-                          'DADOS_ALTENTICADOS':'N'}
-                    self.__alter__(index, data)
-                    return {'response':True,'msg':f'Um e-mal foi enviado para {self.dados_inscrito.get("DS_EMAIL")} para refazer o processo'}
-                except:
-                    return {'response':False,'msg':'erro no envio do email'}
+                html=f'{sys.argv.get("path_templates")}{sys.argv.get("indeferido")}'
+                self.__enviao_email_simples(cpf,html,texto)
+                data={'CORRETO':'S' ,
+                        'DADOS_CONFIRMADOS':'N' , 
+                        'NU_PROCESSO':'0',
+                        'DADOS_ALTENTICADOS':'N'}
+                self.__alter__(index, data)
+                return {'response':True,'msg':f'Um e-mal foi enviado para {self.dados_inscrito.get("DS_EMAIL")} para refazer o processo'}
+
 
             else: return {'response':False,'msg':'incrito  não encontrado'}
         
         def deferir(data):  #(cpf, alter, pendente)
             v=self.get_info(cpf,['DADOS_CONFIRMADOS','NO_CURSO','NO_MODALIDADE_CONCORRENCIA','DADOS_ALTENTICADOS'])
-            print(v)
             index=v['INDEX']
             
             if v['DADOS_CONFIRMADOS']=='S':
                 dd=data.get('alter')
-                falta_doc=data.get('falta_doc')
-                if falta_doc=='':
-                    falta_doc='N'
-
+                falta_doc=data.get('texto')
+                temp=sys.argv.get("deferido")
+                msg='matricula realizada'
+                data={'DADOS_ALTENTICADOS':'S',
+                      'MATRICULA':'DEFERIDO',
+                      'FALTA_DOCS':falta_doc,}
+                if falta_doc:
+                    temp=sys.argv.get("email_matricula_provisoria")
+                    msg='matricula provisoria'
+                    data['MATRICULA']='PROVISORIA'
+                    
+                html=f'{sys.argv.get("path_templates")}{temp}'
                 for i in dd:
                     alter_inscrito(index, i, dd[i].upper())
                 if v['DADOS_ALTENTICADOS']=='S':
                     return {'response':True, 'msg':'dados atualizados apenas'}
                 alter_materias(v['NO_CURSO'],v['NO_MODALIDADE_CONCORRENCIA'])
-                data={'DADOS_ALTENTICADOS':'S',
-                      'MATRICULA':'DEFERIDO',
-                      'FALTA_DOCS':falta_doc,}
+                self.__enviao_email_simples(cpf,html,falta_doc)
                 self.__alter__(index, data)
-                return {'response':True, 'msg':'dados atualizados e autenticados'}
+                return {'response':True, 'msg':f'dados atualizados e autenticados e {msg}'}
             
             return {'response':False, 'msg':'ainda não validados'}
         
@@ -406,7 +416,6 @@ class usuario:
     def relatorio_matriculados(self, data):
         dd=data_filtro('DADOS_ALTENTICADOS == "S"')
         if not dd.empty:
-
             file=f'./{sys.argv("csv_matriculados")}'
             dd=dd.assign(MATRICULA_APROVADA='S')
             dd[colunas_csv+['MATRICULA_APROVADA']].to_csv(file, sep=';', index=0, encoding='utf-8')
@@ -414,17 +423,7 @@ class usuario:
             self.token_file[token]=file
             return {'response': True, 'token': token }
         return {'response': False, 'msg': 'sem usuario autemticados' }
-    
-    @validar_token
-    def up_csv_de_espera(self, data):
-        file=data['file']
-        if file.filename.endswith('.csv'):
-            txt=io.StringIO(file.read().decode('latin-1').encode('utf8').decode().replace('"',''))  # converte para UTF-8 e salva em cache
-            data=list(csv.reader(txt, delimiter=';'))
-            coluna = data.pop(0)[:-4] + list('1234')    # para as 4 ultimas colunas sem nome
-            gerar_data_frame(data, coluna)
-            return {'resopnse':True, 'msg':'ok'}
-        return {'response':False, 'msg':'arquivo não é .CSV'}
+
 
     @validar_token
     def alter_templates(self, data):
@@ -563,11 +562,8 @@ colunas_csv=[
     'CO_IES', 
     'NO_IES', 
     'SG_IES', 
-    'SG_UF_IES', 
-    '1', 
-    '2', 
-    '3',
-    '4', 
+    'SG_UF_IES',
+    'SIGLA_MODALIDADE_CONCORRENCIA',
 ]
 
 para_não_exibir=[
@@ -579,11 +575,7 @@ para_não_exibir=[
     'CO_CURSO_INSCRICAO',
     'NU_NOTA_CANDIDATO',
     'NU_NOTACORTE_CONCORRIDA',
-    'CO_IES',
-    '1', 
-    '2', 
-    '3',
-    '4', 
+    'CO_IES', 
 ]
 
     

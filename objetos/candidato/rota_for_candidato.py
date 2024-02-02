@@ -29,7 +29,7 @@ def login(data):
 def all_data(req):
     data=loads(req.data) if req.data else {}
     ip=request.remote_addr
-    ip=request.headers.get('meu-ip-real-telvez-seja').split(',')[0]
+    #ip=request.headers.get('meu-ip-real-telvez-seja').split(',')[0]
     data['ip']=ip
     Berare=req.headers.get('Authorization')
     if Berare:

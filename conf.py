@@ -43,7 +43,9 @@ conf_email={
     "path_templates":"./templates/",
     "email_init":"email_boa_vindas.html",
     "indeferido":"email_indeferido.html",
+    "email_matricula_provisoria":"email_matricula_provisoria.html",
     "deferido":"email_deferido.html",
-    "roda_pe":"roda_pe.html"
+    "roda_pe":"roda_pe.html",
+    "chamada_1": False
 }
 sys.argv.update(conf_email)

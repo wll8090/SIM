@@ -4,21 +4,21 @@ import pandas as pd
 import csv
 from json import dumps, loads
 
-from os import path
+from os import listdir 
 from os.path import exists
 import sys
 
 
-def gerar_data_frame(data, coluna):
-    global all_candidatos ,seq
-    next(seq)
-    if coluna=='file':
-        data=pd.read_csv(f'./{data}',sep=';')
-        print(data)
-        print(data.columns)
-    else:
-        data=pd.DataFrame(data, columns=coluna)
+def gerar_data_frame(file):
+    global all_candidatos 
+    seq_de_chamada()
+    if not exists(file):
+        return False
+    data=pd.read_csv(f'./{file}',sep=';')
     all_candidatos=data.assign(**new_column)  # new columns
+    for i in range(len(all_candidatos)):
+        v=all_candidatos.loc[i,'NO_MODALIDADE_CONCORRENCIA']
+        all_candidatos.loc[i,'SIGLA_MODALIDADE_CONCORRENCIA']=sigla_modalidade.get(v)
     file=montpath(get_var('file'))
     all_candidatos.to_csv( file, sep=';', index=0, encoding='utf-8')
 
@@ -40,9 +40,13 @@ def gerar_data_frame(data, coluna):
     
 
 def seq_de_chamada():
-    for i in range(1,20):
-        sys.argv['chamada']=str(i)
-        yield i
+    l=listdir(f'{sys.argv.get("path_csv")}')
+    l=[i.split('_')[0] for i in l if i.endswith(sys.argv.get('file'))]
+    if len(l)>0:
+        v=max([int(i) for i in l])
+        sys.argv['chamada']=f'{v+1}'
+    else:
+        sys.argv['chamada']='1'
 
     
 def salvar_cahamda(data='F'):
@@ -63,6 +67,8 @@ def alter_inscrito(index, campo, valor):
 
 
 def data_filtro(query=False):
+    if type(all_candidatos) == bool:
+        return False
     if not query:
         return all_candidatos
     return all_candidatos.query( query )
@@ -71,7 +77,7 @@ def data_filtro(query=False):
 def reload_candidatos(valor=0):
     global all_candidatos
     file=montpath(get_var('file'))
-    if not path.exists(file):
+    if not exists(file):
         return False
     with open(file ,'r',encoding='utf8')   as arq:
         ll=list(csv.reader(arq, delimiter=';'))
@@ -96,13 +102,28 @@ new_column={
     "MATRICULA":'N',
     "FALTA_DE_DOCS":'N',
     "DATA_MATRICULA":'',
-    "RASTRO_ANALISADOR":''
+    "RASTRO_ANALISADOR":'',
+    "SIGLA_MODALIDADE_CONCORRENCIA":''
 }
-
-seq=seq_de_chamada()
 
 montpath=lambda file: f'{get_var("path_csv")}{get_var("chamada")}_{file}'
 
 get_var = lambda v: sys.argv[v]
 
+all_candidatos=False
+
 reload_candidatos()
+
+
+sigla_modalidade={
+    'Ampla concorrência':'AC',
+    'Candidatos autodeclarados pretos, pardos ou indígenas, com renda familiar bruta per capita igual ou inferior a 1 salário mínimo e que tenham cursado integralmente o ensino médio em escolas públicas (Lei nº 12.711/2012).':'LB_PPI',
+    'Candidatos autodeclarados pretos, pardos ou indígenas, independentemente da renda, que tenham cursado integralmente o ensino médio em escolas públicas (Lei nº 12.711/2012).':'LI_PPI',
+    'Candidatos autodeclarados quilombolas, com renda familiar bruta per capita igual ou inferior a 1 salário mínimo e que tenham cursado integralmente o ensino médio em escolas públicas (Lei nº 12.711/2012).':'LB_Q',
+    'Candidatos com deficiência, independentemente da renda, que tenham cursado integralmente o ensino médio em escolas públicas (Lei nº 12.711/2012).':'LI_PCD',
+    'Candidatos com deficiência, que tenham renda familiar bruta per capita igual ou inferior a 1 salário mínimo e que tenham cursado integralmente o ensino médio em escolas públicas (Lei nº 12.711/2012)':'LB_PCD',
+    'Candidatos com renda familiar bruta per capita igual ou inferior a 1 salário mínimo que tenham cursado integralmente o ensino médio em escolas públicas (Lei nº 12.711/2012).':'LB_EP',
+    'Candidatos que, independentemente da renda, tenham cursado integralmente o ensino médio em escolas públicas (Lei nº 12.711/2012).':'LI_EP',
+    'Indígenas':'A1',
+    'Quilombola':'A2'
+}

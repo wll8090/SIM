@@ -42,7 +42,7 @@ class cantidato:
         self.user=self.dados.get('NO_INSCRITO')
         s=self.dados['TP_SEXO'].tolist()[0]
         if s=='M':
-            self.meus_docs.insert(9,'*resevista')
+            self.meus_docs.insert(10,'*resevista')
         return True
     
     def my_dados(self):
@@ -80,7 +80,7 @@ class cantidato:
         reload_candidatos()
         v=self.__my_filtro('DADOS_CONFIRMADOS')
         if v == 'S':
-            return {'response':False,'msg':'arquivo ja foi salvo'}
+            return {'response':False,'msg':'arquivo ja foi salvo e ta em analise'}
         elif v == 'N':
             return {'response':False,'msg':'validar dados primeiro'}
         pdf=all([data['files'][i].mimetype=='application/pdf' for i in self.meus_docs if data['files'].get(i) != None])
@@ -105,13 +105,15 @@ class cantidato:
     def etapa(self, data):
         reload_candidatos()
         v=self.__my_filtro('NU_PROCESSO')
-        etapa={'0':'0 - Indeferido',
+        etapa={
+        '0':'0 - Indeferido, olhe seu e-mail',
         '1':'1 - Aprovado',
         "2":'2 - Aguradando confirmação de dados',
         "3":'3 - Dados confirmado',
-        "4":'4 - Documentos enviados',
+        "4":'4 - Analise de documentos enviados',
         "5":'5 - Documentos autenticados',
-        "6":'6 - Deferido, eba!' }
+        "6":'6 - Matriculado, eba!' }
+
         return {'response':True,'etapa':etapa[v]}
     
     @validar_token
@@ -120,7 +122,12 @@ class cantidato:
     
     @validar_token
     def meu_pdf(self,data):
-        return {'response':'True','lista':self.meus_docs}
+        v=self.__my_filtro('SIGLA_MODALIDADE_CONCORRENCIA')
+        if 'LB_' in v:
+            dd=self.meus_docs+docs_cotista_renda
+        elif 'LI_' in v:
+            dd=self.meus_docs+docs_cotista
+        return {'response':'True','lista':dd}
     
     @validar_token
     def modelo_doc(self, data):
@@ -144,7 +151,8 @@ lista_dados_login=[
     'DT_NASCIMENTO',
     'NU_CPF_INSCRITO',
     'NO_INSCRITO',
-    'TP_SEXO'
+    'TP_SEXO',
+    'NO_MODALIDADE_CONCORRENCIA'
 ]
 
 lista_de_valores=[
@@ -193,12 +201,9 @@ lista_de_valores=[
             'SG_IES', 
             'TP_SEXO',
             'SG_UF_IES', 
-            #'1', 
-            #'2', 
-            #'3',
-            #'4', 
+            'ETNIA_E_COR',
 
-            ## new columns
+            ## new columns ####
             #'EMAIL_ENVIADO',        # N  ou  S           
             'DADOS_CONFIRMADOS',    # N  ou  S  ou  P  -> sem pdf
             'DADOS_ALTENTICADOS',    # N  ou  S  ou  p  -> sem ver o pdf
@@ -206,19 +211,53 @@ lista_de_valores=[
             ]
 
 
-docs=['*Frente do RG',
-      '*Costa do RG',
+docs=[ 
+      '*Ficha cadastral',
+      'Ficha cadastral complementar',
+      '*Frente do RG',
+      '*Verso do RG',
       '*CPF',
-      '*Certição de nascimento ou casamento',
-      'Comprovante do estado civil',
+      'Certição de nascimento ou casamento',
       '*Comprovante de residencia',
       '*Certidão de quitacao eleitoral',
       '*Certificado de conclusão do ensino médio',
-      'Declaração de estudos em escolas públicas',
       '*Histórico escolardo ensino médio',
-      'Declaração de inexistência vinculo',
-      'Declaração de composisão famíliar',
-      'Termo de responsabilidade e veracidade das informações',
-
-      #'outros'
+      '*Declaração de inexistência vinculo'
       ]
+
+
+docs_cotista=[
+      '*Declaração de estudos em escolas públicas',
+      '*Termo de responsabilidade e veracidade das informações',
+      'Autodeclaração étnico-racial'
+      ]
+
+docs_cotista_renda= docs_cotista+[
+      '*Comprovante do estado civil',
+      '*Declaração de composisão de familia',
+      '*Documentos de identificação do grupo familiar (RG, CPF > 18 / certidão < 18)',
+      '*CNIS',
+      '*Declaração de imposto de renda',
+      '*Carteira de Trabalho e Previdência Social',
+      '*Extratos bancários candidato e grupo familiar',
+      'Contracheques',
+      'Recibo de pagamento autônomo ou declaração de trabalho informal',
+      'Extrato de pagamento do beneficio INSS',
+      'Declaração de renda de atividades rurais',
+      'Comprovante de recebimento Bolsa Familia ou outro beneficio',
+      'Comprovante recebimento de pensão alimenticia',
+      'Declaração de desemprego',
+      'Outros documentos'
+      ]
+
+
+#NO_MODALIDADE_CONCORRENCIA
+
+#AC > docs
+
+#LB_ > docs + docs_cotista_renda
+
+#LI_  > docs + docs_cotista
+
+
+

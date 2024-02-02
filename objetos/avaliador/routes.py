@@ -15,7 +15,10 @@ def login(data,IO):
     ip=data.get('ip')
     pwd=data.get('pwd')
     user=usuario(login, pwd, ip, IO)
-    if user.login():
+    v=user.login()
+    if v=='000':
+        return {"response":False, 'msg':"erro no vervidor LDAP"} 
+    if v:
         users_logado[f'{login}-{ip}']=user
         return {"response":True, 'msg':"usuario logado", 'token':user.token,'csv':exists('./candidatos.csv'),'ip':f'{ip}'}
     return {"response":False, 'msg':"erro no login"}
