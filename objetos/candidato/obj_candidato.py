@@ -123,10 +123,11 @@ class cantidato:
     @validar_token
     def meu_pdf(self,data):
         v=self.__my_filtro('SIGLA_MODALIDADE_CONCORRENCIA')
+        dd=self.meus_docs
         if 'LB_' in v:
-            dd=self.meus_docs+docs_cotista_renda
+            dd+=docs_cotista_renda
         elif 'LI_' in v:
-            dd=self.meus_docs+docs_cotista
+            dd+=docs_cotista
         return {'response':'True','lista':dd}
     
     @validar_token

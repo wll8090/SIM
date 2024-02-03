@@ -18,5 +18,5 @@
     "email_matricula_provisoria": "email_matricula_provisoria.html",
     "deferido": "email_deferido.html",
     "roda_pe": "roda_pe.html",
-    "chamada_1": false
+    "chamada_1": true
 }

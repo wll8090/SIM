@@ -28,7 +28,7 @@ def all_data(req):
         data=request.json
     else: data={}
     ip=request.remote_addr
-    #ip=request.headers.get('meu-ip-real-telvez-seja').split(',')[0]
+    ip=request.headers.get('meu-ip-real-telvez-seja').split(',')[0]
     data['ip']=ip  
     beare=request.headers.get('Authorization')
     data['Bearer']=None
@@ -53,10 +53,11 @@ def rotas(app ):
 
     @app.route('/<key>/<acao>/<args>', methods=['post', 'get'])   #### rotas do sitema
     def rotas(key, acao, args):
-        data=all_data(request)
         if request.method=='GET':
+            key=f'{key}-{data["ip"]}'
             if key in users_logado:
                 ip=request.remote_addr
+                ip=request.headers.get('meu-ip-real-telvez-seja').split(',')[0]
                 if acao == 'file':                  ## autanticar candidato
                     token=request.args.get('file')
                     print(token)

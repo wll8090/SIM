@@ -23,7 +23,7 @@ app_del_image:
 
 
 mysql_run:
-	docker run --name $(banco) -v ./mysql:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=root -d mysql
+	docker run --name $(banco) -v ./../mysql:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=root -d mysql
 
 mysql_stop:
 	docker rm -f $(banco)

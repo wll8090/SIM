@@ -29,7 +29,7 @@ def login(data):
 def all_data(req):
     data=loads(req.data) if req.data else {}
     ip=request.remote_addr
-    #ip=request.headers.get('meu-ip-real-telvez-seja').split(',')[0]
+    ip=request.headers.get('meu-ip-real-telvez-seja').split(',')[0]
     data['ip']=ip
     Berare=req.headers.get('Authorization')
     if Berare:
@@ -48,6 +48,7 @@ def creat_rotas(app):  ## rotas para os candidatos
         if request.method=='GET':
             if acao == 'modelo_docs':
                 data['file']=request.args['file']
+                data['Bearer']=candidato_logado[ip].token
                 re=candidato_logado[ip].modelo_doc(data)
                 if type(re) == str:
                     return send_file(re)

@@ -491,6 +491,7 @@ lista_simples=[
     'DS_MATRICULA',
     'NU_CPF_INSCRITO',
     'TP_SEXO',
+    'SIGLA_MODALIDADE_CONCORRENCIA',
     'NO_CURSO'
 ]
 
@@ -510,6 +511,7 @@ lista_de_filtro=[
     'NO_CURSO',
     'NO_CAMPUS',
     'EMAIL_ENVIADO',
+    'SIGLA_MODALIDADE_CONCORRENCIA',
     'DADOS_CONFIRMADOS',    # N  ou  S  ou  P  -> sem pdf
     'DADOS_ALTENTICADOS'
 ]
