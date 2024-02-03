@@ -53,6 +53,7 @@ def rotas(app ):
 
     @app.route('/<key>/<acao>/<args>', methods=['post', 'get'])   #### rotas do sitema
     def rotas(key, acao, args):
+        data=all_data(request)
         if request.method=='GET':
             key=f'{key}-{data["ip"]}'
             if key in users_logado:

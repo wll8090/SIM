@@ -98,8 +98,8 @@ class usuario:
             return '000'
         if v:
             dia=self.date_now()
-            self.token=sha256(f'{dia}{self.ip}{self.nome},{self.nonce}'.encode()).hexdigest()  
             #self.token='1010'   # <<<------ tokem fake  # del
+            self.token=sha256(f'{dia}{self.ip}{self.nome},{self.nonce}'.encode()).hexdigest()  
             return 1
         return 0
 
@@ -160,7 +160,7 @@ class usuario:
         destino=candidato.get('DS_EMAIL') 
         
          
-        pwd='1010'  #f'Acesso@{randint(10**5, 10**6-1)}'     << ------ senha fake para inscrito   
+        pwd=f'Acesso@{randint(10**5, 10**6-1)}'     #<< ------ senha fake para inscrito   
         hash_pwd=sha256(pwd.encode()).hexdigest()
         candidato['PWD']=hash_pwd
         candidato['pwd_sem_hash']=pwd
@@ -323,12 +323,12 @@ class usuario:
             dd=self.__to_dict(inscrito)
             if not dd:
                 return {'response': False,  'msg':'erro nos dados'}
-            token='1010' #sha256(f'{randint(10**20,10**21):X}'.encode()).hexdigest()   <<<------token de send file
+            token=sha256(f'{randint(10**20,10**21):X}'.encode()).hexdigest()   #<<<------token de send file
             self.token_file[token]=file
             self.dados_inscrito.update(dd[0])           
             return {'response': True,  'inscrito':dd[0],'token':token}
         
-        def indeferir(data):  #(cpf, texto )
+        def devolver(data):  #(cpf, texto )
             inscrito=data_filtro(f'NU_CPF_INSCRITO == "{cpf}"')
             v=inscrito['DADOS_CONFIRMADOS'].to_list()
             if v:
@@ -336,17 +336,38 @@ class usuario:
                     return {'response':False,'msg':'incrito  não iniciou o processo'}
                 index=inscrito.index.to_list()[0]
                 texto=data.get('texto')
-                html=f'{sys.argv.get("path_templates")}{sys.argv.get("indeferido")}'
+                html=f'{sys.argv.get("path_templates")}{sys.argv.get("devolvido")}'
                 self.__enviao_email_simples(cpf,html,texto)
                 data={'CORRETO':'S' ,
-                        'DADOS_CONFIRMADOS':'N' , 
+                        'DADOS_CONFIRMADOS':'N' ,
+                        'MATRICULA':'DEVOLVIDO',
                         'NU_PROCESSO':'0',
                         'DADOS_ALTENTICADOS':'N'}
                 self.__alter__(index, data)
                 return {'response':True,'msg':f'Um e-mal foi enviado para {self.dados_inscrito.get("DS_EMAIL")} para refazer o processo'}
-
-
+        
             else: return {'response':False,'msg':'incrito  não encontrado'}
+        
+        def indeferido(data): #(cpf, txt)
+            inscrito=data_filtro(f'NU_CPF_INSCRITO == "{cpf}"')
+            v=inscrito['DADOS_CONFIRMADOS'].to_list()
+            if v:
+                if v[0] not in ['I','S','P']:
+                    return {'response':False,'msg':'incrito  não iniciou o processo'}
+                index=inscrito.index.to_list()[0]
+                texto=data.get('texto')
+                html=f'{sys.argv.get("path_templates")}{sys.argv.get("devolvido")}'
+                self.__enviao_email_simples(cpf,html,texto)
+                data={'CORRETO':'S' ,
+                        'DADOS_CONFIRMADOS':'S' , 
+                        'NU_PROCESSO':'7',
+                        'MATRICULA':'INDEFERIDO',
+                        'DADOS_ALTENTICADOS':'S'}
+                self.__alter__(index, data)
+                return {'response':True,'msg':f'Matricula indeferida, email enviado {self.dados_inscrito.get("DS_EMAIL")}'}
+        
+            else: return {'response':False,'msg':'incrito  não encontrado'}    
+
         
         def deferir(data):  #(cpf, alter, pendente)
             v=self.get_info(cpf,['DADOS_CONFIRMADOS','NO_CURSO','NO_MODALIDADE_CONCORRENCIA','DADOS_ALTENTICADOS'])
@@ -417,10 +438,10 @@ class usuario:
     def relatorio_matriculados(self, data):
         dd=data_filtro('DADOS_ALTENTICADOS == "S"')
         if not dd.empty:
-            file=f'./{sys.argv("csv_matriculados")}'
+            file=f'./{sys.argv.get("csv_matriculados")}'
             dd=dd.assign(MATRICULA_APROVADA='S')
             dd[colunas_csv+['MATRICULA_APROVADA']].to_csv(file, sep=';', index=0, encoding='utf-8')
-            token='1011' #sha256(f'{randint(10**20,10**21):X}'.encode()).hexdigest()   <<<------token de send file
+            token=sha256(f'{randint(10**20,10**21):X}'.encode()).hexdigest()   #<<<------token de send file
             self.token_file[token]=file
             return {'response': True, 'token': token }
         return {'response': False, 'msg': 'sem usuario autemticados' }
@@ -492,8 +513,9 @@ lista_simples=[
     'NU_CPF_INSCRITO',
     'TP_SEXO',
     'SIGLA_MODALIDADE_CONCORRENCIA',
-    'NO_CURSO'
-]
+    'NO_CURSO',
+    'DADOS_CONFIRMADOS'
+        ]
 
 lista_de_filtro=[
     'DS_TURNO',

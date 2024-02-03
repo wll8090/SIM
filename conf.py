@@ -35,7 +35,10 @@ sys.argv={
 "csv_lista_espera" : "lista_espera.csv" ,
 "csv_chamada" : "chamada.csv" ,
 "chamada" : '1',
-"csv_matriculados":"matriculados.csv"
+"csv_matriculados":"matriculados.csv",
+'autorizados':['USER.ROOT','SERGIO','MARCELA.ARCANJO','ELIEZILDA.SOUSA','JAQUELUCIA.BRAGA',
+               'DEBORA.SOUSA','MANOEL.SILVA','MARCOS.FARIAS','LENIVALDO.SOUZA',
+               'BRUNO.SANTANA','MARIA.BARBOSA','MAURIVAN.SANTOS']
 }
 
 ## email
@@ -44,8 +47,10 @@ conf_email={
     "email_init":"email_boa_vindas.html",
     "indeferido":"email_indeferido.html",
     "email_matricula_provisoria":"email_matricula_provisoria.html",
+    "devolvido":"emial_devolvido.html",
     "deferido":"email_deferido.html",
     "roda_pe":"roda_pe.html",
     "chamada_1": False
 }
+
 sys.argv.update(conf_email)
