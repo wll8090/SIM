@@ -47,7 +47,7 @@ conf_email={
     "email_init":"email_boa_vindas.html",
     "indeferido":"email_indeferido.html",
     "email_matricula_provisoria":"email_matricula_provisoria.html",
-    "devolvido":"emial_devolvido.html",
+    "devolvido":"email_devolvido.html",
     "deferido":"email_deferido.html",
     "roda_pe":"roda_pe.html",
     "chamada_1": False

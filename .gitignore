@@ -1,4 +1,5 @@
 __pycache__
 load_sys.json
-static/*.scv
+static/*.csv
+docs/*.cpf
 tempore.csv

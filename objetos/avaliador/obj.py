@@ -304,7 +304,8 @@ class usuario:
     def autenticar(self, data):
         reload_candidatos()
         def listar(data):  # ()
-            lista=['NO_INSCRITO','NU_CPF_INSCRITO','DS_EMAIL','DADOS_ALTENTICADOS']
+            lista=['NO_INSCRITO','NU_CPF_INSCRITO','DS_EMAIL','NO_CURSO',
+                    'SIGLA_MODALIDADE_CONCORRENCIA','DADOS_ALTENTICADOS']
             dd=data_filtro('DADOS_CONFIRMADOS == "S"')
             if dd.empty:
                 return {'response': False, 'msg':'sem lista'}
@@ -360,7 +361,7 @@ class usuario:
                 self.__enviao_email_simples(cpf,html,texto)
                 data={'CORRETO':'S' ,
                         'DADOS_CONFIRMADOS':'S' , 
-                        'NU_PROCESSO':'7',
+                        'NU_PROCESSO':'8',
                         'MATRICULA':'INDEFERIDO',
                         'DADOS_ALTENTICADOS':'S'}
                 self.__alter__(index, data)
@@ -372,7 +373,7 @@ class usuario:
         def deferir(data):  #(cpf, alter, pendente)
             v=self.get_info(cpf,['DADOS_CONFIRMADOS','NO_CURSO','NO_MODALIDADE_CONCORRENCIA','DADOS_ALTENTICADOS'])
             index=v['INDEX']
-            
+
             if v['DADOS_CONFIRMADOS']=='S':
                 dd=data.get('alter')
                 falta_doc=data.get('texto')
@@ -380,12 +381,13 @@ class usuario:
                 msg='matricula realizada'
                 data={'DADOS_ALTENTICADOS':'S',
                       'MATRICULA':'DEFERIDO',
+                       'NU_PROCESSO':'4',
                       'FALTA_DOCS':falta_doc,}
                 if falta_doc:
                     temp=sys.argv.get("email_matricula_provisoria")
                     msg='matricula provisoria'
                     data['MATRICULA']='PROVISORIA'
-                    
+                    data['NU_PROCESSO']='7'
                 html=f'{sys.argv.get("path_templates")}{temp}'
                 for i in dd:
                     alter_inscrito(index, i, dd[i].upper())
