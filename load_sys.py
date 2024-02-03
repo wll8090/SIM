@@ -12,7 +12,7 @@ def load_sys():
             arq.close()
     else:
         salve_sys()
-
+        print('file criado')
 def salve_sys():
     with open(file,'w') as arq:
         arq.write(dumps(sys.argv,indent=4))
