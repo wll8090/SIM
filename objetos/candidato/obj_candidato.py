@@ -14,6 +14,8 @@ import sys
 class cantidato:
     def validar_token(funk):
         def new_funk(self, dado):
+            if self.dados.get('MATRICULA') != 'INDEFERIDO':
+                return {'response':False, 'msg':'Matrícua indeferida'}
             if dado.get('Bearer') == self.token:
                 return funk(self, dado)
             return {'response':False, 'msg':'erro no token'}
@@ -37,7 +39,7 @@ class cantidato:
 
     def login(self):
         n=randint(10**5,10**6-1)
-        self.token='1001'  #sha256(f'{datetime.now().strftime("%d-%m-%Y")}--{self.ip}--{n}').hexdigest()
+        self.token=sha256(f'{datetime.now().strftime("%d-%m-%Y")}--{self.ip}--{n}').hexdigest()
         self.dados=data_filtro(f'index == {self.index}')
         self.user=self.dados.get('NO_INSCRITO')
         s=self.dados['TP_SEXO'].tolist()[0]
@@ -62,7 +64,6 @@ class cantidato:
     def send_dados(self, data):
         reload_candidatos()
         v=self.dados['DADOS_CONFIRMADOS'].to_list()[0]
-        print(v,'kkkkk')
         correto=data.get('erro')
         if data.get('confirm'):
             if v == 'P' or v == 'S':
@@ -106,7 +107,7 @@ class cantidato:
         reload_candidatos()
         v=self.__my_filtro('NU_PROCESSO')
         etapa={
-        '0':'0 - Indeferido, olhe seu e-mail',
+        '0':'0 - Devolvido, olhe seu e-mail',
         '1':'1 - Aprovado',
         "2":'2 - Aguradando confirmação de dados',
         "3":'3 - Dados confirmado',
@@ -123,10 +124,13 @@ class cantidato:
     @validar_token
     def meu_pdf(self,data):
         v=self.__my_filtro('SIGLA_MODALIDADE_CONCORRENCIA')
+        dd=self.meus_docs
         if 'LB_' in v:
             dd=self.meus_docs+docs_cotista_renda
         elif 'LI_' in v:
             dd=self.meus_docs+docs_cotista
+        elif v in ['A1','A2']:
+            dd+=A1_A2
         return {'response':'True','lista':dd}
     
     @validar_token
@@ -251,6 +255,10 @@ docs_cotista_renda= docs_cotista+[
       ]
 
 
+A1_A2=[
+    '*Declaração da comunidade'
+    ]
+
 #NO_MODALIDADE_CONCORRENCIA
 
 #AC > docs
@@ -258,6 +266,8 @@ docs_cotista_renda= docs_cotista+[
 #LB_ > docs + docs_cotista_renda
 
 #LI_  > docs + docs_cotista
+
+#A1,A2
 
 
 

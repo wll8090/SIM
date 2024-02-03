@@ -22,7 +22,7 @@ def acesso(data):
     if ll == lll:
         file=f'{sys.argv.get("path_templates")}{sys.argv.get("email_init")}'
         candidato = dd.to_dict('records')[0]
-        pwd='1010' #f'Acesso@{randint(10**5, 10**6-1)}'     #<< ------ senha fake para inscrito   
+        pwd=f'Acesso@{randint(10**5, 10**6-1)}'     #<< ------ senha fake para inscrito   
         hash_pwd=sha256(pwd.encode()).hexdigest()
         candidato['PWD']=hash_pwd
         candidato['pwd_sem_hash']=pwd
@@ -56,31 +56,3 @@ def acesso(data):
 
     return {'response':False, 'msg': 'usuario não encontrado'}
 
-
-
-'''server {
-        listen 5001 ssl;
-        listen [::]:5001 ssl;
-
-        ssl_certificate /etc/nginx/certs/sistemas.ufnt.edu.br.crt;
-        ssl_certificate_key /etc/nginx/certs/sistemas.ufnt.edu.br.key;
-
-        server_name sau_api;
-
-        location /sau {
-
-                proxy_pass https://10.253.251.36:5001/;
-                proxy_set_header Host $host;
-                proxy_set_header X-Real-IP $remote_addr;
-                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-                proxy_set_header X-Forwarded-Proto $scheme;
-                }
-        }'''
-
-
-'''
-                proxy_set_header Host $host;
-                proxy_set_header X-Real-IP $remote_addr;
-                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-                proxy_set_header X-Forwarded-Proto $scheme;
-'''

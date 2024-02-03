@@ -55,8 +55,10 @@ def rotas(app ):
     def rotas(key, acao, args):
         data=all_data(request)
         if request.method=='GET':
+            key=f'{key}-{data["ip"]}'
             if key in users_logado:
                 ip=request.remote_addr
+                ip=request.headers.get('meu-ip-real-telvez-seja').split(',')[0]
                 if acao == 'file':                  ## autanticar candidato
                     token=request.args.get('file')
                     print(token)

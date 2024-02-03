@@ -4,15 +4,15 @@ import sys
 ######------ constantes------------
 ##  host app
 
-host_app= '192.168.40.102'
+host_app= '0.0.0.0'
 port= 5001
 debug= True
 
 ## host LDAP
-host_sli= '10.253.251.13'
+host_sli= '10.253.251.16'
 
 ## banco de dados mysql
-DB_HOST='localhost'
+DB_HOST='container_mysql_sim'
 DB_PORT='3306'
 DB_USER='root'
 DB_PASSWORD='root'
@@ -47,6 +47,10 @@ conf_email={
     "devolvido":"emial_devolvido.html",
     "deferido":"email_deferido.html",
     "roda_pe":"roda_pe.html",
-    "chamada_1": False
+    "chamada_1": False,
+    'autorizados':['USER.ROOT','SERGIO','MARCELA.ARCANJO','ELIEZILDA.SOUSA','JAQUELUCIA.BRAGA',
+                   'DEBORA.SOUSA','MANOEL.SILVA','MARCOS.FARIAS','LENIVALDO.SOUZA',
+                   'BRUNO.SANTANA','MARIA.BARBOSA','MAURIVAN.SANTOS']
 }
+
 sys.argv.update(conf_email)
