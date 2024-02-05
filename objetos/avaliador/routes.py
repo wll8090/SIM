@@ -119,6 +119,7 @@ def rotas(app ):
                 return abort(404)
 
         else: return abort(404)
+        re['ip']=f'{data["ip"]}'
         return jsonify(re)
 
         

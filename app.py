@@ -14,6 +14,6 @@ def create_app():
 
     return IO, app
 
-if __name__ == '__main__':
-    IO, app=create_app()
-    IO.run(app, debug=debug, host=host_app, port=port, allow_unsafe_werkzeug=True)
+
+appp, app=create_app()
+app.run( debug=debug, host=host_app, port=port) # , allow_unsafe_werkzeug=True)

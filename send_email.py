@@ -43,7 +43,7 @@ class enviar_email:
         self.texto=self.texto.format(**data)
         
     def disparo(self, destino, assunto):
-        destino='wllyvn@gmail.com'    ###  <<< ----  para teste
+        #destino='wllyvn@gmail.com'    ###  <<< ----  para teste
         self.msg=MIMEMultipart()
         self.msg['From']=email
         self.msg['To']=destino

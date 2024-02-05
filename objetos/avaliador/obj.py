@@ -177,7 +177,7 @@ class usuario:
             if '@' not in destino:
                 self.__alter__(index,{'EMAIL_ENVIADO':'E'})
                 return False
-            envioEmail.disparo(destino,'Aprovação na graduação')   # envia email   << ----- envia email
+            envioEmail.disparo(destino,'Informação para matrícula na UFNT')   # envia email   << ----- envia email
             print(f'enviada para {destino}')
             envioEmail.desconect()
             self.add_in_db.append(candidato)
@@ -293,7 +293,7 @@ class usuario:
         destino=candidato.get('DS_EMAIL')
         envioEmail.format_texto(candidato)
         index=candidato['INDEX']
-        envioEmail.disparo(destino,'Aprovação na graduação')   # envia email   << ----- envia email
+        envioEmail.disparo(destino,'Informação para matrícula na UFNT')   # envia email   << ----- envia email
         print(f'enviada para {destino}')
         envioEmail.desconect()
         return True
@@ -375,13 +375,12 @@ class usuario:
             index=v['INDEX']
 
             if v['DADOS_CONFIRMADOS']=='S':
-                dd=data.get('alter')
                 falta_doc=data.get('texto')
                 temp=sys.argv.get("deferido")
                 msg='matricula realizada'
                 data={'DADOS_ALTENTICADOS':'S',
                       'MATRICULA':'DEFERIDO',
-                       'NU_PROCESSO':'4',
+                       'NU_PROCESSO':'6',
                       'FALTA_DOCS':falta_doc,}
                 if falta_doc:
                     temp=sys.argv.get("email_matricula_provisoria")
@@ -389,8 +388,6 @@ class usuario:
                     data['MATRICULA']='PROVISORIA'
                     data['NU_PROCESSO']='7'
                 html=f'{sys.argv.get("path_templates")}{temp}'
-                for i in dd:
-                    alter_inscrito(index, i, dd[i].upper())
                 if v['DADOS_ALTENTICADOS']=='S':
                     return {'response':True, 'msg':'dados atualizados apenas'}
                 alter_materias(v['NO_CURSO'],v['NO_MODALIDADE_CONCORRENCIA'])
@@ -400,6 +397,16 @@ class usuario:
             
             return {'response':False, 'msg':'ainda não validados'}
         
+        def editar(data): #(cpf:str, alter:dict)
+            v=self.get_info(cpf,['DADOS_CONFIRMADOS','NO_CURSO','NO_MODALIDADE_CONCORRENCIA','DADOS_ALTENTICADOS'])
+            index=v['INDEX']
+            if v['DADOS_CONFIRMADOS']=='S':
+                dd=data.get('alter')
+                dd['CORRETO']=''
+                for i in dd:
+                    alter_inscrito(index, i, dd[i].upper())
+                return {'response':True, 'msg':f'dados atualizados: {" ".join(dd.keys())}'}
+
         ##---------
         re=locals().get(data.get('acao'))
         if re:

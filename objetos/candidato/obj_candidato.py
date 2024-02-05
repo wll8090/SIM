@@ -16,7 +16,6 @@ class cantidato:
         def new_funk(self, dado):
             #print(self.dados,'kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk')
             #if self.dados.get('MATRICULA') != 'INDEFERIDO':
-            #   return {'response':False, 'msg':'Matrícua indeferida'}
             if dado.get('Bearer') == self.token:
                 return funk(self, dado)
             return {'response':False, 'msg':'erro no token'}
@@ -109,13 +108,13 @@ class cantidato:
         etapa={
         '0':'Devolvido, olhe seu e-mail',
         '1':'Aprovado',
-        "2":'Aguradando confirmação de dados',
-        "3":'Dados confirmado',
-        "4":'Analise de documentos enviados',
+        "2":'Aguardando confirmação de dados',
+        "3":'Dados confirmados',
+        "4":'Documentos em análise',
         "5":'Documentos autenticados',
-        "6":'Matriculado, eba!',
-        "7":'Matricula com pendencia, olhe seu e-mail',
-        "8":'Matriula INDEFERIDA'}
+        "6":'Matrícula aprovada,olhe seu e-mail',
+        "7":'Matrícula com pendência, olhe seu e-mail',
+        "8":'Matrícula INDEFERIDA'}
         return {'response':True,'etapa':etapa[v]}
     
     @validar_token
@@ -135,6 +134,8 @@ class cantidato:
             dd+=docs_cotista
         elif v in ['A1','A2']:
             dd+=A1_A2
+        if 'PCD' in v:
+            dd+=docs_pcd
         return {'response':'True','lista':dd}
     
     @validar_token
@@ -266,6 +267,10 @@ A1_A2=[
     '*Declaração da comunidade'
     ]
 
+docs_pcd=[
+     '*Laudo médico'
+]
+
 #NO_MODALIDADE_CONCORRENCIA
 
 #AC > docs
@@ -273,6 +278,8 @@ A1_A2=[
 #LB_ > docs + docs_cotista_renda
 
 #LI_  > docs + docs_cotista
+
+#PCD > docs_pcd
 
 #A1,A2
 
