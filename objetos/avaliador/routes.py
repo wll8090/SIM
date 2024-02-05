@@ -20,7 +20,8 @@ def login(data,IO):
         return {"response":False, 'msg':"erro no vervidor LDAP"} 
     if v:
         users_logado[f'{login}-{ip}']=user
-        return {"response":True, 'msg':"usuario logado", 'token':user.token,'csv':exists('./candidatos.csv'),'ip':f'{ip}'}
+        file=f'{sys.argv.get("path_csv")}1_{sys.argv.get("csv_chamada")}'
+        return {"response":True, 'msg':"usuario logado", 'token':user.token,'csv':exists(file),'ip':f'{ip}'}
     return {"response":False, 'msg':"erro no login"}
 
 def all_data(req):
@@ -105,6 +106,11 @@ def rotas(app ):
             elif acao == 'revog_matricula':                  ## retornar e modifica os templates de e-mail
                 re=users_logado[key].revog_matricula(data)       
 
+
+            elif acao == 'insert_in_db':
+                re=users_logado[key].insert_in_db(data) 
+
+
             elif acao == 'relatorio_matriculados':                  ## gerar o relatorio de matricula e deixa disponivel em /file?token=token
                 re=users_logado[key].relatorio_matriculados(data)
                 print(re)
@@ -120,6 +126,7 @@ def rotas(app ):
 
         else: return abort(404)
         re['ip']=f'{data["ip"]}'
+        re['aviso']=open('aviso.txt', encoding='utf8').read()
         return jsonify(re)
 
         

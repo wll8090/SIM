@@ -27,9 +27,8 @@ def acesso(data):
         candidato['PWD']=hash_pwd
         candidato['pwd_sem_hash']=pwd
         
-        if candidato['EMAIL_ENVIADO'] == 'R':
-            print(f'ja enviado para {email}')
-            return {'response':False, 'msg':f'email ja enviado para : {email}'}
+        if candidato['EMAIL_ENVIADO'] == 'N':
+            return {'response':False, 'msg':f'seu email ainda não foi enviado, aguarde!'}
         
         envioEmail=enviar_email(open(file,encoding='utf8').read())
         envioEmail.connect()
@@ -39,7 +38,7 @@ def acesso(data):
             envioEmail.disparo(email,'Aprovação na graduação')   # envia email   << ----- envia email
             print(f'enviada para {email}')
             envioEmail.desconect()
-            data={'EMAIL_ENVIADO':'R','NU_PROCESSO':'2','DS_EMAIL': email}
+            data={'EMAIL_ENVIADO':'S','NU_PROCESSO':'2','DS_EMAIL': email}
             for campo in data:
                 data_frame_inscritos.alter_inscrito(index , campo, data[campo])
             conexao_db.delete_do_banco(candidato)

@@ -64,7 +64,7 @@ def drop_db(cursor, conn ,data):
 def inserir_no_banco(cursor, conn, dados):
     re=__consuta(cursor, dados[0].get('NU_CPF_INSCRITO'))
     if len(re) >= 1:
-        return 100
+        return re
     colunas=["NO_INSCRITO", "NO_MAE", "NU_CPF_INSCRITO", "DS_EMAIL", "DT_NASCIMENTO", "PWD"]
     valores=[[i.get(j) for j in colunas] for i in dados]
     C_myqsl=f"""INSERT INTO {database}.{tabela_candidato} ({', '.join(colunas)}) VALUES ({('%s, '* len(colunas))[:-2]});"""

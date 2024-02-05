@@ -16,4 +16,4 @@ def create_app():
 
 
 appp, app=create_app()
-app.run( debug=debug, host=host_app, port=port) # , allow_unsafe_werkzeug=True)
+app.run(host=host_app, port=port) # , allow_unsafe_werkzeug=True)

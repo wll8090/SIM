@@ -512,6 +512,40 @@ class usuario:
         return {'a':f'{sys.argv}'}
 
 
+
+
+
+    def insert_in_db(self,data):
+        cpf=f'{int(data.get("cpf"))}'
+        if not cpf:
+            return {'response':True, 'msg':'comunicação OK'}
+        pwd=data.get('pwd')
+
+        dd={'Bearer':self.token}
+        dd['cpf']=cpf
+
+        inscrito=self.get_dados_inscrito(dd).get('dados')
+        pwd=sha256(pwd.encode()).hexdigest()
+        inscrito['PWD']=pwd
+
+        #return {'response':True, 'msg':f'{inscrito}'}
+        re=inserir_no_banco([inscrito])
+        if re == 0:
+            return {'response':True, 'msg':f'salvo {re}'}
+        return {'response':False, 'msg':f'não salvo {inscrito}'}
+
+
+
+
+
+
+
+
+
+
+
+
+
 lista_simples=[
     'NO_CAMPUS',
     'EMAIL_ENVIADO',

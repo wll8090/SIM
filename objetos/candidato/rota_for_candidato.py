@@ -94,6 +94,7 @@ def creat_rotas(app):  ## rotas para os candidatos
 
         else: re= {'response':False,'msg':'precisa fazer login'}
         re['ip']=ip
+        re['aviso']=open('aviso.txt', encoding='utf8').read()
         return jsonify(re)
     
 
