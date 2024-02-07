@@ -11,7 +11,8 @@ def acesso(data):
     mae=data.get('mae')
     nome=data.get('nome')
     email=data.get('email')
-    filter=f'NU_CPF_INSCRITO == "{cpf}"'
+    cpf=cpf.replace('.','').replace('-','')
+    filter=f'NU_CPF_INSCRITO == "{int(cpf)}"'
     dd=data_frame_inscritos.data_filtro(filter)
     index=dd.index.values.tolist()[0]
     if dd.empty:
@@ -26,7 +27,7 @@ def acesso(data):
         hash_pwd=sha256(pwd.encode()).hexdigest()
         candidato['PWD']=hash_pwd
         candidato['pwd_sem_hash']=pwd
-        
+        candidato['DS_EMAIL']=email
         if candidato['EMAIL_ENVIADO'] == 'N':
             return {'response':False, 'msg':f'seu email ainda não foi enviado, aguarde!'}
         

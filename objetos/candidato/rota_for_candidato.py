@@ -12,6 +12,9 @@ candidato_logado={}
 
 def login(data):
     global candidato_logado
+    #data['cpf']=data.get('cpf').replace('.','').replace('-','')
+    if not data['cpf'].isdigit():
+        return( {'response':False, 'msg':'use apenas números no CPF'})
     dados={"NU_CPF_INSCRITO": str(int(data.get('cpf'))), 
            "DS_EMAIL":data.get('email'),
            "PWD": sha256(data.get('pwd').encode()).hexdigest() }
@@ -29,8 +32,10 @@ def login(data):
 def all_data(req):
     data=loads(req.data) if req.data else {}
     ip=request.remote_addr
-    ip=request.headers.get('meu-ip-real-telvez-seja').split(',')[0]
-    data['ip']=ip
+    ip=request.headers.get('meu-ip-real-telvez-seja')
+    if not ip:
+        return abort(404)
+    data['ip']=ip.split(',')[0]
     Berare=req.headers.get('Authorization')
     if Berare:
         data['Bearer']=Berare.split()[-1]
@@ -86,7 +91,6 @@ def creat_rotas(app):  ## rotas para os candidatos
                 re=candidato_logado[ip].sair(data)
                 if re:
                     candidato_logado.pop(ip)
-                    print(candidato_logado)
                 else:
                     re= {'response':False}
             else:
@@ -96,10 +100,3 @@ def creat_rotas(app):  ## rotas para os candidatos
         re['ip']=ip
         re['aviso']=open('aviso.txt', encoding='utf8').read()
         return jsonify(re)
-    
-
-    @app.route('/get_var_user')
-    def get_var():
-        print(candidato_logado)
-        re=candidato_logado['192.168.40.102'].get_var_user()
-        return f'{re}'

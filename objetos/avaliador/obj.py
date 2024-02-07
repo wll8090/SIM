@@ -16,7 +16,7 @@ from . import rankear
 from json import loads, dumps
 
 import csv
-import pandas as pd 
+import pandas as pd
 import sys
 import io
 import load_sys
@@ -30,8 +30,7 @@ reload_candidatos()
 class usuario:
     def validar_token(funk):                     ####### decorator para validar o tokem de usuario
         def new_funk(self, data):
-            print(data.get('Bearer'))
-            if data.get('Bearer') == self.token or True:
+            if data.get('Bearer') == self.token:
                 self.data=self.date_now(h=True)
                 return funk(self, data)
             else:
@@ -43,6 +42,7 @@ class usuario:
         self.nome=nome
         self.ip=ip
         self.filtro={}
+        self.filtro_autenticar={}
         self.pwd=pwd
         self.IO=IO
         self.gerar_sokk()
@@ -57,6 +57,7 @@ class usuario:
             alter_inscrito(index , campo, data[campo])
         alter_inscrito(index,'RASTRO_ANALISADOR',self.nome)
 
+    
     def get_info(self, cpf , lista=False):
         dados=data_filtro(f'NU_CPF_INSCRITO == "{cpf}"')
         if dados.empty:
@@ -67,8 +68,8 @@ class usuario:
             dados={i:dados[i] for i in lista}
         dados['INDEX']=index
         return dados
-            
 
+    
     def dados(self) :
         dd={"user":self.nome, 
             "token": self.token }
@@ -99,11 +100,11 @@ class usuario:
         if v:
             dia=self.date_now()
             #self.token='1010'   # <<<------ tokem fake  # del
-            self.token=sha256(f'{dia}{self.ip}{self.nome},{self.nonce}'.encode()).hexdigest()  
+            self.token=sha256(f'{dia}{self.ip}{self.nome},{self.nonce}'.encode()).hexdigest()
             return 1
         return 0
 
-
+    
     @validar_token
     def listar_candidatos(self, data, oo=False):
         campo=data.get('campo')
@@ -112,7 +113,6 @@ class usuario:
         if not reload_candidatos():  # restartarta o arquivo de usuarios
             return {"response": False, "msg": "lista ainda não carregada"}
 
-        
         if filtro :
             if acao == 'add' and campo:
                 self.filtro.update({campo:filtro})
@@ -132,6 +132,7 @@ class usuario:
         alunos=self.__to_dict(alunos_filtrados, lista_simples)
         q=len(alunos)
         return {'response':True, 'filtro':self.filtro, 'campos_valores':valores, 'alunos': alunos, 'quantidade':q}
+
     
     @validar_token
     def get_dados_inscrito(self, data):
@@ -140,10 +141,8 @@ class usuario:
         dd=self.get_info(cpf)
         if not dd:
             return {'response':False,'dados':{}}
-        
-        return {'response':True,'dados':dd}
-    
 
+        return {'response':True,'dados':dd}
 
 
     #####################################################################################################################################
@@ -157,21 +156,20 @@ class usuario:
             print(f'erro {candidato}')
             self.erro_brutal.append(candidato)
             return False
-        destino=candidato.get('DS_EMAIL') 
-        
-         
-        pwd=f'Acesso@{randint(10**5, 10**6-1)}'     #<< ------ senha fake para inscrito   
+        destino=candidato.get('DS_EMAIL')
+
+        pwd=f'Acesso@{randint(10**5, 10**6-1)}'     #<< ------ senha fake para inscrito
         hash_pwd=sha256(pwd.encode()).hexdigest()
         candidato['PWD']=hash_pwd
         candidato['pwd_sem_hash']=pwd
         envioEmail.format_texto(candidato)
         index=candidato['INDEX']
-        
+
         if candidato['EMAIL_ENVIADO'] == 'S':
             print(f'ja enviado para {destino}')
             lista_thread.pop(0)
             return False
-        
+
         try:
             #########################################
             if '@' not in destino:
@@ -184,7 +182,7 @@ class usuario:
             data={'EMAIL_ENVIADO':'S','NU_PROCESSO':'2'}
             self.__alter__(index,data)
             ##########################################
-                
+
         except :
             print(f'erro para {destino}')
             delete_do_banco(candidato)
@@ -221,6 +219,7 @@ class usuario:
         return 1
         Falaaa.json
 
+    
     @validar_token
     def enviar_email(self, data):                                              # aqui preprapa a o envio do email
         lista_thread=[]
@@ -247,7 +246,7 @@ class usuario:
                 th0.start()
             Thread(target=self.__validar_thread, args=(th0, lista_de_espera), daemon=1).start()
             return {'response':True}
-        
+
         else:                                                                    ############## envia email para apenas um, sem uso de thread
             re=self._sende_mail(send, [0], [0])
             if re:
@@ -274,6 +273,7 @@ class usuario:
         else:
             return {'response': False, 'msg': 'Apenas formato .CSV'}
     
+
     @validar_token
     def up_csv_de_espera(self, data):
         file=data['file']
@@ -285,6 +285,7 @@ class usuario:
             return {'resopnse':True, 'msg':'ok'}
         return {'response':False, 'msg':'arquivo não é .CSV'}
     
+
     def __enviao_email_simples(self,cpf,html, msg=''):
         envioEmail=enviar_email(open(html,encoding='utf8').read())
         envioEmail.connect()
@@ -299,18 +300,37 @@ class usuario:
         return True
 
     
-
     @validar_token
     def autenticar(self, data):
         reload_candidatos()
         def listar(data):  # ()
             lista=['NO_INSCRITO','NU_CPF_INSCRITO','DS_EMAIL','NO_CURSO',
-                    'SIGLA_MODALIDADE_CONCORRENCIA','DADOS_ALTENTICADOS']
+                    'SIGLA_MODALIDADE_CONCORRENCIA','DADOS_ALTENTICADOS','MATRICULA']
+
+            camp_val={}
+            campos=['NO_CURSO','SIGLA_MODALIDADE_CONCORRENCIA']
+            campo=data.get('campo')
+            valor=data.get('valor')
+            if campo:
+                if valor == 'del':
+                    self.filtro_autenticar.pop(campo)
+                else:
+                    self.filtro_autenticar.update({campo:valor})
+
             dd=data_filtro('DADOS_CONFIRMADOS == "S"')
+
+            for i in campos:
+                v=dd[i].unique().tolist()
+                camp_val.update({i:v})
+            for i in self.filtro_autenticar:
+                dd=dd.query(f'{i} == "{self.filtro_autenticar[i]}"')
+
             if dd.empty:
                 return {'response': False, 'msg':'sem lista'}
-            return {'response': True, 'inscritos':self.__to_dict(dd,lista) , 'quantia':len(dd)}
+            return {'response': True, 'inscritos':self.__to_dict(dd,lista) , 'quantia':len(dd), 'campos_valores':camp_val,"filtro":self.filtro_autenticar}
 
+
+        
         def ver(data):  #(cpf )
             file=f'{sys.argv.get("path_docs")}{cpf:0>11}.pdf'
             if not exists(file):
@@ -326,8 +346,9 @@ class usuario:
                 return {'response': False,  'msg':'erro nos dados'}
             token=sha256(f'{randint(10**20,10**21):X}'.encode()).hexdigest()   #<<<------token de send file
             self.token_file[token]=file
-            self.dados_inscrito.update(dd[0])           
+            self.dados_inscrito.update(dd[0])
             return {'response': True,  'inscrito':dd[0],'token':token}
+
         
         def devolver(data):  #(cpf, texto )
             inscrito=data_filtro(f'NU_CPF_INSCRITO == "{cpf}"')
@@ -346,8 +367,9 @@ class usuario:
                         'DADOS_ALTENTICADOS':'N'}
                 self.__alter__(index, data)
                 return {'response':True,'msg':f'Um e-mal foi enviado para {self.dados_inscrito.get("DS_EMAIL")} para refazer o processo'}
-        
+
             else: return {'response':False,'msg':'incrito  não encontrado'}
+
         
         def indeferido(data): #(cpf, txt)
             inscrito=data_filtro(f'NU_CPF_INSCRITO == "{cpf}"')
@@ -366,7 +388,7 @@ class usuario:
                         'DADOS_ALTENTICADOS':'S'}
                 self.__alter__(index, data)
                 return {'response':True,'msg':f'Matricula indeferida, email enviado {self.dados_inscrito.get("DS_EMAIL")}'}
-        
+
             else: return {'response':False,'msg':'incrito  não encontrado'}    
 
         
@@ -394,8 +416,9 @@ class usuario:
                 self.__enviao_email_simples(cpf,html,falta_doc)
                 self.__alter__(index, data)
                 return {'response':True, 'msg':f'dados atualizados e autenticados e {msg}'}
-            
+
             return {'response':False, 'msg':'ainda não validados'}
+
         
         def editar(data): #(cpf:str, alter:dict)
             v=self.get_info(cpf,['DADOS_CONFIRMADOS','NO_CURSO','NO_MODALIDADE_CONCORRENCIA','DADOS_ALTENTICADOS'])
@@ -414,7 +437,7 @@ class usuario:
             return locals().get(data.get('acao'))(data)
         else:
             return {'response': False, 'msg': 'erro na opção'}
-    
+
     
     @validar_token
     def sair(self, data):
@@ -426,7 +449,7 @@ class usuario:
         self.dados_inscrito=b'cui34r9o8w4yntwtwg'
         return {'response':True}
 
-
+    
     def __to_dict(self, data, lista=False):
         if not lista:
             lista=lista_completa
@@ -439,11 +462,12 @@ class usuario:
             return self.token_file.get(token)
         else: return False
 
+    
     @validar_token
     def relatorio_de_materias(self, data):
         return get_materias()
 
-    @validar_token        
+    @validar_token
     def relatorio_matriculados(self, data):
         dd=data_filtro('DADOS_ALTENTICADOS == "S"')
         if not dd.empty:
@@ -455,7 +479,7 @@ class usuario:
             return {'response': True, 'token': token }
         return {'response': False, 'msg': 'sem usuario autemticados' }
 
-
+    
     @validar_token
     def alter_templates(self, data):
         acao=data.get('acao')
@@ -501,7 +525,7 @@ class usuario:
                 data.loc[index,'RASTRO_ANALISADOR']=self.nome
                 alter_materias(curso, modalidade , +1)
                 return {'response':True,'msg':f'vaga liberada em {curso} {modalidade}'}
-                
+
         return {'response':False,'msg':'cpf não encontrado'}
 
     def rankear(self):
@@ -511,10 +535,7 @@ class usuario:
         load_sys.set_sys('valor', 1000)
         return {'a':f'{sys.argv}'}
 
-
-
-
-
+    
     def insert_in_db(self,data):
         cpf=f'{int(data.get("cpf"))}'
         if not cpf:
@@ -538,14 +559,6 @@ class usuario:
 
 
 
-
-
-
-
-
-
-
-
 lista_simples=[
     'NO_CAMPUS',
     'EMAIL_ENVIADO',
@@ -563,15 +576,15 @@ lista_simples=[
 lista_de_filtro=[
     'DS_TURNO',
     'DS_FORMACAO',
-    'TP_SEXO', 
+    'TP_SEXO',
     'ST_OPCAO',
-    'NO_MODALIDADE_CONCORRENCIA', 
-    'ST_BONUS_PERC', 
+    'NO_MODALIDADE_CONCORRENCIA',
+    'ST_BONUS_PERC',
     'QT_BONUS_PERC',
-    'NO_ACAO_AFIRMATIVA_BONUS', 
+    'NO_ACAO_AFIRMATIVA_BONUS',
     'NU_CLASSIFICACAO',
-    'NO_IES', 
-    'SG_IES', 
+    'NO_IES',
+    'SG_IES',
     'SG_UF_IES',
     'NO_CURSO',
     'NO_CAMPUS',
@@ -587,66 +600,66 @@ new_columns=list(new_column)
 
 
 colunas_csv=[
-    'NO_CAMPUS', 
-    'CO_IES_CURSO', 
-    'NO_CURSO', 
+    'NO_CAMPUS',
+    'CO_IES_CURSO',
+    'NO_CURSO',
     'DS_TURNO',
-    'DS_FORMACAO', 
-    'QT_VAGAS_CONCORRENCIA', 
-    'CO_INSCRICAO_ENEM', 
+    'DS_FORMACAO',
+    'QT_VAGAS_CONCORRENCIA',
+    'CO_INSCRICAO_ENEM',
     'NO_INSCRITO',
-    'NO_SOCIAL', 
-    'NU_CPF_INSCRITO', 
+    'NO_SOCIAL',
+    'NU_CPF_INSCRITO',
     'DT_NASCIMENTO',
     'TP_SEXO',
     'NU_RG',
-    'NO_MAE', 
-    'DS_LOGRADOURO', 
-    'NU_ENDERECO', 
+    'NO_MAE',
+    'DS_LOGRADOURO',
+    'NU_ENDERECO',
     'DS_COMPLEMENTO',
-    'SG_UF_INSCRITO', 
-    'NO_MUNICIPIO', 
-    'NO_BAIRRO', 
-    'NU_CEP', 
+    'SG_UF_INSCRITO',
+    'NO_MUNICIPIO',
+    'NO_BAIRRO',
+    'NU_CEP',
     'NU_FONE1',
-    'NU_FONE2', 
-    'DS_EMAIL', 
-    'NU_NOTA_L', 
-    'NU_NOTA_CH', 
+    'NU_FONE2',
+    'DS_EMAIL',
+    'NU_NOTA_L',
+    'NU_NOTA_CH',
     'NU_NOTA_CN',
-    'NU_NOTA_M', 
-    'NU_NOTA_R', 
-    'CO_CURSO_INSCRICAO', 
+    'NU_NOTA_M',
+    'NU_NOTA_R',
+    'CO_CURSO_INSCRICAO',
     'ST_OPCAO',
-    'NO_MODALIDADE_CONCORRENCIA', 
-    'ST_BONUS_PERC', 
+    'NO_MODALIDADE_CONCORRENCIA',
+    'ST_BONUS_PERC',
     'QT_BONUS_PERC',
-    'NO_ACAO_AFIRMATIVA_BONUS', 
+    'NO_ACAO_AFIRMATIVA_BONUS',
     'NU_NOTA_CANDIDATO',
-    'NU_NOTACORTE_CONCORRIDA', 
-    'NU_CLASSIFICACAO', 
+    'NU_NOTACORTE_CONCORRIDA',
+    'NU_CLASSIFICACAO',
     'DS_MATRICULA',
-    'DT_OPERACAO', 
-    'CO_IES', 
-    'NO_IES', 
-    'SG_IES', 
+    'DT_OPERACAO',
+    'CO_IES',
+    'NO_IES',
+    'SG_IES',
     'SG_UF_IES',
     'SIGLA_MODALIDADE_CONCORRENCIA',
 ]
 
 para_não_exibir=[
-    'NU_NOTA_L', 
-    'NU_NOTA_CH', 
+    'NU_NOTA_L',
+    'NU_NOTA_CH',
     'NU_NOTA_CN',
-    'NU_NOTA_M', 
-    'NU_NOTA_R', 
+    'NU_NOTA_M',
+    'NU_NOTA_R',
     'CO_CURSO_INSCRICAO',
     'NU_NOTA_CANDIDATO',
     'NU_NOTACORTE_CONCORRIDA',
-    'CO_IES', 
+    'CO_IES'
 ]
 
-    
+
 lista_completa=colunas_csv + new_columns
 for i in para_não_exibir:
     lista_completa.remove(i)

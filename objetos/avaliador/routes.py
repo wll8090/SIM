@@ -29,8 +29,10 @@ def all_data(req):
         data=request.json
     else: data={}
     ip=request.remote_addr
-    ip=request.headers.get('meu-ip-real-telvez-seja').split(',')[0]
-    data['ip']=ip  
+    ip=request.headers.get('meu-ip-real-telvez-seja')
+    if not ip:
+        return abort(404)
+    data['ip']=ip.split(',')[0]
     beare=request.headers.get('Authorization')
     data['Bearer']=None
     if beare:

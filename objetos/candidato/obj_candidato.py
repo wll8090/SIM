@@ -55,6 +55,7 @@ class cantidato:
     def all_dados(self, data):
         if self.__my_filtro('DADOS_CONFIRMADOS') == 'N' :
             dd=self.dados[lista_de_valores].to_dict(orient='records')[0]
+            #dd[NU_CPF_INSCRITO]=f'{dd["NUCPF_INSCRITO"]:0>11}'
             return {'response':True, 'dados':dd ,'msg':'ok'}
         return {'response':False, 'msg': 'dados já confirmados','dados':{}}
 
@@ -124,7 +125,8 @@ class cantidato:
     @validar_token
     def meu_pdf(self,data):
         v=self.__my_filtro('SIGLA_MODALIDADE_CONCORRENCIA')
-        dd=self.meus_docs[:]
+        self.meus_docs=[]
+        dd=docs[:]
         s=self.dados['TP_SEXO'].tolist()[0]
         if s=='M':
             dd+=['*resevista']
@@ -136,6 +138,7 @@ class cantidato:
             dd+=A1_A2
         if 'PCD' in v:
             dd+=docs_pcd
+        self.meus_docs=dd[:]
         return {'response':'True','lista':dd}
     
     @validar_token
