@@ -1,26 +1,23 @@
 from conexao_db import inserir_no_banco, delete_do_banco, connection_db
-from static_csv.data_frame_inscritos import *
+from conf import *
+from static.data_frame_inscritos import *
 from datetime import datetime
 from hashlib import sha256
 from login_ldap import login_user
+from os import path
+from os import listdir
+from os.path import exists
 from random import randint
 from send_email import enviar_email
 from threading import Thread, active_count
 from time import sleep
-from static_csv.alter_materias import *
+from static.alter_materias import *
 from . import rankear
-from shutil import copyfile
+from json import loads, dumps
 
-#from conf import *
-#from os.path import exists
-#from os import path
-#from os import listdir
-#from json import loads, dumps
-
-
-#import csv
-#import pandas as pd
-#import sys
+import csv
+import pandas as pd
+import sys
 import io
 import load_sys
 
@@ -33,7 +30,7 @@ reload_candidatos()
 class usuario:
     def validar_token(funk):                     ####### decorator para validar o tokem de usuario
         def new_funk(self, data):
-            if data.get('Bearer') == self.token and data.get('ip') == self.ip or True:
+            if data.get('Bearer') == self.token and data.get('ip') == self.ip:
                 self.data=self.date_now(h=True)
                 return funk(self, data)
             else:
@@ -278,71 +275,15 @@ class usuario:
     
 
     @validar_token
-    def up_csv_espera(self, data):
-        interesse=data['interesse']
-        socioeconomica=data['socioeconomica']
-        if not (socioeconomica.filename.endswith('.csv') and interesse.filename.endswith('.csv')):
-            return {'response':False, 'msg':'arquivos não são .CSV'}
-        interesse.save('interesse.csv')
-        socioeconomica.save('socioeconomica.csv')
-        copyfile('./socioeconomica.csv','./para_rankear_socioeconomica.csv')
-        return {'response':True, 'msg':'ok'}
-    
-    @validar_token
-    def criar_csv_vagas(self,data):
-        if data['file']:
-            file=data['file']
-            bufe=io.BytesIO()
-            file.save(bufe)
-            bufe.seek(0)
-            dd=pd.read_csv(bufe, sep=';' , index_col=0, encoding='utf8')
-            dd=dd.transpose()
-            index=[nome_modalidade[i] for i in dd.index.to_list()]
-            dd.index=index
-            dd=loads(dd.to_json(force_ascii=0))
-            file=f'{sys.argv.get("path_csv")}{sys.argv.get("csv_vagas_materias")}'
-            dd_vagas=loads(open(file,'r',encoding='utf8').read())
-            print(dd_vagas)
-            for mat in dd:
-                for mod in dd[mat]:
-                    if mod not in dd_vagas[mat]:
-                        v=dd[mat][mod]
-                        dd_vagas[mat][mod]=[v,v]
-                    else:
-                        dd_vagas[mat][mod][0]=dd[mat][mod]
-            with open(file,'w',encoding='utf8') as arq:
-                arq.write(dumps(dd_vagas, indent=4, ensure_ascii=0))
-                arq.close()
-            return {"response":True, "msg": 'vagas atualizadas'}
-        dd=get_materias().copy()
-        dd={materias:{sigla_modalidade[mod]:dd[materias][mod][0] for mod in dd[materias]} for materias in dd}
-        dd=pd.DataFrame(dd)
-        dd=dd.transpose().sort_index().sort_index(axis=1)
-        dd=dd.fillna(0).astype(int)
-        bufer=io.StringIO()
-        dd.to_csv(bufer, sep=';',encoding='utf8')
-        bufer.seek(0)
-        dados=bufer.getvalue().encode('utf-8')
-        bufer=io.BytesIO(dados)
-        self.token_file={}
-        token='1011'#sha256(f'{randint(10**20,10**21):X}'.encode()).hexdigest()   #<<<------token de send file
-        file_name='csv_vagas.csv'
-        self.token_file[token]=file_name
-        sys.argv[file_name]=bufer        
-        return {"response":True, "token": token}
-
-
-    @validar_token
-    def rankear(self,data):
-        nome_csv='./para_rankear_socioeconomica.csv'
-        completo_csv='intereasse.csv'
-        if not exists(nome_csv):
-            return {'response':False,'msg':'lista de espera não carregada'}
-        seq_de_chamada()
-        file=rankear.rankeamento(nome_csv, completo_csv)  #(csv socioeconomica , csv de espera)
-        gerar_data_frame(file)
-        load_materias()
-        return {'response':True,'msg':f'chamada {sys.argv.get("chamada")} em adamento'}
+    def up_csv_de_espera(self, data):
+        file=data['file']
+        if file.filename.endswith('.csv'):
+            nome_csv='./tempore_2.csv'
+            file.save(nome_csv)
+            gerar_data_frame(nome_csv)
+            load_materias()
+            return {'resopnse':True, 'msg':'ok'}
+        return {'response':False, 'msg':'arquivo não é .CSV'}
     
 
     def __enviao_email_simples(self,cpf,html, msg=''):
@@ -363,8 +304,6 @@ class usuario:
     def autenticar(self, data):
         reload_candidatos()
         def listar(data):  # ()
-            camp_val={}
-            campos=['NO_CURSO','SIGLA_MODALIDADE_CONCORRENCIA']
             lista=['NO_INSCRITO','NU_CPF_INSCRITO','DS_EMAIL','NO_CURSO',
                     'SIGLA_MODALIDADE_CONCORRENCIA','DADOS_ALTENTICADOS','MATRICULA']
 
@@ -391,6 +330,7 @@ class usuario:
             return {'response': True, 'inscritos':self.__to_dict(dd,lista) , 'quantia':len(dd), 'campos_valores':camp_val,"filtro":self.filtro_autenticar}
 
 
+        
         def ver(data):  #(cpf )
             file=f'{sys.argv.get("path_docs")}{cpf:0>11}.pdf'
             if not exists(file):
@@ -432,36 +372,28 @@ class usuario:
 
         
         def indeferir(data): #(cpf, txt)
-            inscrito=self.get_info(cpf,['DADOS_CONFIRMADOS','NO_CURSO','NO_MODALIDADE_CONCORRENCIA','DADOS_ALTENTICADOS','MATRICULA'])
-            index=inscrito['INDEX']
-            if not inscrito:
-                return {'response':False,'msg':'incrito  não encontrado'}
-            if inscrito['DADOS_ALTENTICADOS'] not in ['I','S','P']:
-                return {'response':False,'msg':'incrito  não iniciou o processo'}
-            if inscrito['MATRICULA'] == 'INDEFERIDO':
-                return {'response':False,'msg':f'Inscrito ja foi indeferido'}
-            
-            texto=data.get('texto')
-            html=f'{sys.argv.get("path_templates")}{sys.argv.get("indeferido")}'
-            data={'CORRETO':'S' ,
-                    'DADOS_CONFIRMADOS':'S' , 
-                    'NU_PROCESSO':'8',
-                    'MATRICULA':'INDEFERIDO',
-                    'DADOS_ALTENTICADOS':'S'}
-            
-            self.__enviao_email_simples(cpf,html,texto)
-            self.__alter__(index, data)
-            msg=''
-            if inscrito['MATRICULA'] in ['PROVISORIA','DEFERIDO']:
-                msg=f'e-mail enviado'
-                alter_materias(inscrito['NO_CURSO'],inscrito['NO_MODALIDADE_CONCORRENCIA'], q= +1) #libera uma vaga
+            inscrito=data_filtro(f'NU_CPF_INSCRITO == "{cpf}"')
+            v=inscrito['DADOS_CONFIRMADOS'].to_list()
+            if v:
+                if v[0] not in ['I','S','P']:
+                    return {'response':False,'msg':'incrito  não iniciou o processo'}
+                index=inscrito.index.to_list()[0]
+                texto=data.get('texto')
+                html=f'{sys.argv.get("path_templates")}{sys.argv.get("indeferido")}'
+                self.__enviao_email_simples(cpf,html,texto)
+                data={'CORRETO':'S' ,
+                        'DADOS_CONFIRMADOS':'S' , 
+                        'NU_PROCESSO':'8',
+                        'MATRICULA':'INDEFERIDO',
+                        'DADOS_ALTENTICADOS':'S'}
+                self.__alter__(index, data)
+                return {'response':True,'msg':f'Matricula indeferida, email enviado {self.dados_inscrito.get("DS_EMAIL")}'}
 
-            return {'response':True,'msg':f'Matricula indeferida {msg}'}
-
+            else: return {'response':False,'msg':'incrito  não encontrado'}    
 
         
         def deferir(data):  #(cpf, alter, pendente)
-            v=self.get_info(cpf,['DADOS_CONFIRMADOS','NO_CURSO','NO_MODALIDADE_CONCORRENCIA','DADOS_ALTENTICADOS','MATRICULA'])
+            v=self.get_info(cpf,['DADOS_CONFIRMADOS','NO_CURSO','NO_MODALIDADE_CONCORRENCIA','DADOS_ALTENTICADOS'])
             index=v['INDEX']
 
             if v['DADOS_CONFIRMADOS']=='S':
@@ -477,14 +409,12 @@ class usuario:
                     msg='matricula provisoria'
                     data['MATRICULA']='PROVISORIA'
                     data['NU_PROCESSO']='7'
-                html=f'{sys.argv.get("path_templates")}{temp}'
-                msg=''
-                if v['MATRICULA'] !='DEFERIDO':
-                    self.__enviao_email_simples(cpf,html,falta_doc)
-                    msg='email enviado'
-                self.__alter__(index, data)
                 alter_materias(v['NO_CURSO'],v['NO_MODALIDADE_CONCORRENCIA'])
-                return {'response':True, 'msg':f'dados atualizados apenas {msg}'}
+                html=f'{sys.argv.get("path_templates")}{temp}'
+                if v['DADOS_ALTENTICADOS']!='S':
+                    self.__enviao_email_simples(cpf,html,falta_doc)
+                self.__alter__(index, data)
+                return {'response':True, 'msg':f'dados atualizados e autenticados e {msg}'}
 
             return {'response':False, 'msg':'ainda não validados'}
 
@@ -538,10 +468,10 @@ class usuario:
 
     @validar_token
     def relatorio_matriculados(self, data):
-        dd=data_filtro('DADOS_ALTENTICADOS == "S" | DADOS_CONFIRMADOS == "P"')
+        dd=data_filtro('DADOS_ALTENTICADOS == "S"')
         if not dd.empty:
             file=f'./{sys.argv.get("csv_matriculados")}'
-            dd[colunas_csv+['MATRICULA','FALTA_DOCS']].to_csv(file, sep=';', index=0, encoding='utf-8')
+            dd[colunas_csv+['MATRICULA_APROVADA','MATRICULA']].to_csv(file, sep=';', index=0, encoding='utf-8')
             token=sha256(f'{randint(10**20,10**21):X}'.encode()).hexdigest()   #<<<------token de send file
             self.token_file[token]=file
             return {'response': True, 'token': token }
@@ -596,7 +526,9 @@ class usuario:
 
         return {'response':False,'msg':'cpf não encontrado'}
 
-
+    def rankear(self):
+        return rankear.rankeamento()
+    
     def get_var(self):
         load_sys.set_sys('valor', 1000)
         return {'a':f'{sys.argv}'}

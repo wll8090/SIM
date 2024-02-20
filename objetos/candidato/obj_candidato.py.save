@@ -3,7 +3,7 @@ from io import BytesIO
 from random import randint
 from hashlib import sha256
 from os import listdir, chdir
-from static_csv.data_frame_inscritos import *
+from static.data_frame_inscritos import *
 from os.path import exists
 from json import loads
 
@@ -14,7 +14,7 @@ import sys
 class cantidato:
     def validar_token(funk):
         def new_funk(self, dado):
-            if dado.get('Bearer') == self.token and dado.get('ip') == self.ip:
+            if dado.get('Bearer') == self.token:
                 return funk(self, dado)
             return {'response':False, 'msg':'erro no token'}
         return new_funk
@@ -105,15 +105,15 @@ class cantidato:
         reload_candidatos()
         v=self.__my_filtro('NU_PROCESSO')
         etapa={
-        '0':'Devolvido, olhe seu e-mail',
+        '0':'Devolvido, olhe seu e-mail/ etapa: 0 de 3',
         '1':'Aprovado',
-        "2":'Aguardando confirmação de dados',
-        "3":'Dados confirmados',
-        "4":'Documentos em análise',
+        "2":'Aguardando confirmação de dados/ etapa: 0 de 3',
+        "3":'Dados confirmados/ etapa: 1 de 3',
+        "4":'Documentos em análise/ etapa: 2 de 3',
         "5":'Documentos autenticados',
-        "6":'Matrícula aprovada,olhe seu e-mail',
-        "7":'Matrícula com pendência, olhe seu e-mail',
-        "8":'Matrícula INDEFERIDA'}
+        "6":'Matrícula aprovada,olhe seu e-mail/ etapa: 3 de 3',
+        "7":'Matrícula com pendência, olhe seu e-mail/ etapa: 3 de 3',
+        "8":'Matrícula INDEFERIDA/ etapa: 3 de 3'}
         return {'response':True,'etapa':etapa[v]}
     
     @validar_token

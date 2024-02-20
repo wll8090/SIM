@@ -21,7 +21,9 @@ def login(data,IO):
     if v:
         users_logado[f'{login}-{ip}']=user
         file=f'{sys.argv.get("path_csv")}1_{sys.argv.get("csv_chamada")}'
-        return {"response":True, 'msg':"usuario logado", 'token':user.token,'csv':exists(file),'ip':f'{ip}'}
+        return {"response":True, 'msg':"usuario logado", 'token':user.token,
+                'csv':exists(file),'ip':f'{ip}','csv_espera':exists('./para_rankear.csv'),
+                'chamada':f'{sys.argv.get("chamada")}'}
     return {"response":False, 'msg':"erro no login"}
 
 def all_data(req):
@@ -47,10 +49,6 @@ def rotas(app ):
     CORS(app)
     IO=SocketIO(app)
 
-    @IO.on('ola')
-    def ola():
-        print('kkkkkkkk')
-
     #login({'user':'sergio.ti','ip':'192.168.40.102','pwd':'@Aa1020'}, IO)
     #login({'user':'luis.ti','ip':'192.168.41.8','pwd':'@Aa1020'} , IO)
 
@@ -67,7 +65,10 @@ def rotas(app ):
                     print(token)
                     re=users_logado[key].return_file(token, ip)
                     if re:
-                        return send_file(re)
+                        nome=re
+                        if nome in sys.argv:
+                            re=sys.argv[nome]
+                        return send_file(re, download_name=nome)
 
             return abort(404)
 
@@ -108,9 +109,19 @@ def rotas(app ):
             elif acao == 'revog_matricula':                  ## retornar e modifica os templates de e-mail
                 re=users_logado[key].revog_matricula(data)       
 
+            elif acao == 'criar_csv_vagas':                ## para arquivo csv de vagas
+                data['file']=request.files.get('file')
+                re=users_logado[key].criar_csv_vagas(data) 
 
             elif acao == 'insert_in_db':
                 re=users_logado[key].insert_in_db(data) 
+
+            elif acao == 'aviso':
+                av=open('aviso.txt', encoding='utf8').read()
+                re={'response':True,'aviso':av}
+
+            elif acao == 'rankear':
+                re=users_logado[key].rankear(data) 
 
 
             elif acao == 'relatorio_matriculados':                  ## gerar o relatorio de matricula e deixa disponivel em /file?token=token
@@ -128,7 +139,6 @@ def rotas(app ):
 
         else: return abort(404)
         re['ip']=f'{data["ip"]}'
-        re['aviso']=open('aviso.txt', encoding='utf8').read()
         return jsonify(re)
 
         

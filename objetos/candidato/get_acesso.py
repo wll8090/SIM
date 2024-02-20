@@ -1,4 +1,4 @@
-from static import data_frame_inscritos
+from static_csv import data_frame_inscritos
 from unidecode import unidecode
 from send_email import enviar_email
 import sys
@@ -13,6 +13,7 @@ def acesso(data):
     email=data.get('email')
     cpf=cpf.replace('.','').replace('-','')
     filter=f'NU_CPF_INSCRITO == "{int(cpf)}"'
+    return{'response':False, 'msg':'Seu periodo de chamada terminou'}
     dd=data_frame_inscritos.data_filtro(filter)
     index=dd.index.values.tolist()[0]
     if dd.empty:

@@ -30,7 +30,7 @@ sys.argv={
 "intervalo_entre_chamadas" : "" ,
 "fim_das_matriculas" : "" ,
 "file" : "candidatos.csv" ,
-"path_csv" : "./static/" ,
+"path_csv" : "./static_csv/" ,
 "csv_vagas_materias" : "vaga_materias.json" ,
 "csv_lista_espera" : "lista_espera.csv" ,
 "csv_chamada" : "chamada.csv" ,

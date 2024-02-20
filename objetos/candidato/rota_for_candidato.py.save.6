@@ -4,12 +4,9 @@ from objetos.candidato.obj_candidato import cantidato
 from conexao_db import  consultar_usuario
 from hashlib import sha256
 from os.path import exists
-from os import listdir
 from .get_acesso import acesso
 import sys
-from objetos.candidato.obj_travado import obj_travado
-
-
+from 
 
 candidato_logado={}
 
@@ -25,7 +22,7 @@ def validar_chamado(cpf):
 
 def login(data):
     global candidato_logado
-    data['cpf']=data.get('cpf').replace('.','').replace('-','')
+    #data['cpf']=data.get('cpf').replace('.','').replace('-','')
     if not data['cpf'].isdigit():
         return( {'response':False, 'msg':'use apenas números no CPF'})
     dados={"NU_CPF_INSCRITO": str(int(data.get('cpf'))), 
@@ -33,10 +30,7 @@ def login(data):
            "PWD": sha256(data.get('pwd').encode()).hexdigest() }
     re=consultar_usuario(dados)     ## consulta no banco
     if re:
-        if validar_chamado(dados['NU_CPF_INSCRITO']) and False:
-            user=cantidato( dados['NU_CPF_INSCRITO'], data.get('pwd'), data.get('email'), data.get('ip'))
-        else:
-            user=obj_travado(dados['NU_CPF_INSCRITO'], data.get('pwd'), data.get('email'), data.get('ip'))
+        user=cantidato( dados['NU_CPF_INSCRITO'], data.get('pwd'), data.get('email'), data.get('ip'))
         if user.login():
             candidato_logado[user.ip]=user
             re={'response': True ,'ip':user.ip}
@@ -103,10 +97,6 @@ def creat_rotas(app):  ## rotas para os candidatos
             elif acao == 'modelo_docs':
                 re=candidato_logado[ip].modelo_doc(data)
             
-            elif acao == 'aviso':
-                av=open('aviso.txt', encoding='utf8').read()
-                re={'response':True,'aviso':av}
-            
             elif acao == 'sair':
                 re=candidato_logado[ip].sair(data)
                 if re:
@@ -118,4 +108,5 @@ def creat_rotas(app):  ## rotas para os candidatos
 
         else: re= {'response':False,'msg':'precisa fazer login'}
         re['ip']=ip
+        re['aviso']=open('aviso.txt', encoding='utf8').read()
         return jsonify(re)

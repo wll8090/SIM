@@ -128,3 +128,6 @@ sigla_modalidade={
     'Indígenas':'A1',
     'Quilombola':'A2'
 }
+
+
+nome_modalidade={valor : chave for chave,valor in sigla_modalidade.items()}

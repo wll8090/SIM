@@ -94,7 +94,7 @@ li {
 
         '/login/entrar/null':{
             'meth': 'POST form-data ->  {"user": str, "pwd": str}',
-            'out': 'Json -> {"response": bool, "msg": str, "token": hex}',
+            'out': 'Json -> {"response": bool, "msg": str, "token": hex, "csv":bool, "csv_espera":bool, "chamada":int, "ip":str}',
             'msg': "Para fazer login autenticado pelo LDAP"
             },
 
@@ -137,7 +137,18 @@ li {
                 'out':'Json -> {"response": boll, "token":str}',
                 'msg':"Gera o relatorio final de matriculados arquivo .csv disponivel em /file/chave?token=$(token)"
             },
+        
+        '/$(user)/up_csv_espera/chave':{
+                'meth':'POST form-data',
+                'out':'Json -> {"response": boll, "msg":str}',
+                'msg':"fazer upload de csv da lista de espera"
+            },
 
+        '/$(user)/rankear/chave':{
+                'meth':'POST',
+                'out':'Json -> {"response": boll, "msg":str}',
+                'msg':"fazer nova chamda sobre a lista de espera"
+            },
         
         '/$(user)/file/chave':{
                 'meth':'Get -> ARGS {"token":str}',
@@ -223,8 +234,8 @@ li {
             {%set __ = lista.append(0)%}
             {%set cont = lista | length%}
             <li class="link" id="li{{cont}}" onclick="ver('div{{cont}}')"> 
-                <span class="rota">{{i}}</span> 
-                <div class="req aa div{{cont}} ">
+                {{cont}} <span class="rota">{{i}}</span> 
+                <div class="req aa div{{cont}}">
                     Meth:{{doc[i]['meth']}}<br>
                     Out:{{doc[i]['out']}} 
                 </div>
