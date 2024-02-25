@@ -1,11 +1,11 @@
 {
     "HISTÓRIA": {
         "Ampla concorrência": [
-            5,
+            4,
             3
         ],
         "Candidatos autodeclarados pretos, pardos ou indígenas, com renda familiar bruta per capita igual ou inferior a 1 salário mínimo e que tenham cursado integralmente o ensino médio em escolas públicas (Lei nº 12.711/2012).": [
-            6,
+            3,
             4
         ],
         "Candidatos autodeclarados pretos, pardos ou indígenas, independentemente da renda, que tenham cursado integralmente o ensino médio em escolas públicas (Lei nº 12.711/2012).": [
@@ -13,11 +13,11 @@
             4
         ],
         "Candidatos autodeclarados quilombolas, com renda familiar bruta per capita igual ou inferior a 1 salário mínimo e que tenham cursado integralmente o ensino médio em escolas públicas (Lei nº 12.711/2012).": [
-            0,
+            3,
             0
         ],
         "Candidatos com deficiência, que tenham renda familiar bruta per capita igual ou inferior a 1 salário mínimo e que tenham cursado integralmente o ensino médio em escolas públicas (Lei nº 12.711/2012)": [
-            0,
+            1,
             1
         ],
         "Candidatos com renda familiar bruta per capita igual ou inferior a 1 salário mínimo que tenham cursado integralmente o ensino médio em escolas públicas (Lei nº 12.711/2012).": [
@@ -43,7 +43,7 @@
     },
     "GEOGRAFIA": {
         "Ampla concorrência": [
-            11,
+            9,
             1
         ],
         "Candidatos autodeclarados pretos, pardos ou indígenas, com renda familiar bruta per capita igual ou inferior a 1 salário mínimo e que tenham cursado integralmente o ensino médio em escolas públicas (Lei nº 12.711/2012).": [
@@ -63,7 +63,7 @@
             0
         ],
         "Candidatos com renda familiar bruta per capita igual ou inferior a 1 salário mínimo que tenham cursado integralmente o ensino médio em escolas públicas (Lei nº 12.711/2012).": [
-            0,
+            1,
             0
         ],
         "Candidatos que, independentemente da renda, tenham cursado integralmente o ensino médio em escolas públicas (Lei nº 12.711/2012).": [
@@ -79,7 +79,7 @@
             1
         ],
         "Candidatos com deficiência, que tenham renda familiar bruta per capita igual ou inferior a 1 salário mínimo e que tenham cursado integralmente o ensino médio em escolas públicas (Lei nº 12.711/2012)": [
-            0,
+            1,
             0
         ]
     },
@@ -89,7 +89,7 @@
             2
         ],
         "Candidatos autodeclarados pretos, pardos ou indígenas, com renda familiar bruta per capita igual ou inferior a 1 salário mínimo e que tenham cursado integralmente o ensino médio em escolas públicas (Lei nº 12.711/2012).": [
-            5,
+            3,
             0
         ],
         "Candidatos autodeclarados pretos, pardos ou indígenas, independentemente da renda, que tenham cursado integralmente o ensino médio em escolas públicas (Lei nº 12.711/2012).": [
@@ -113,11 +113,11 @@
             0
         ],
         "Candidatos com deficiência, que tenham renda familiar bruta per capita igual ou inferior a 1 salário mínimo e que tenham cursado integralmente o ensino médio em escolas públicas (Lei nº 12.711/2012)": [
-            0,
+            1,
             0
         ],
         "Candidatos autodeclarados quilombolas, com renda familiar bruta per capita igual ou inferior a 1 salário mínimo e que tenham cursado integralmente o ensino médio em escolas públicas (Lei nº 12.711/2012).": [
-            0,
+            1,
             0
         ],
         "Candidatos com deficiência, independentemente da renda, que tenham cursado integralmente o ensino médio em escolas públicas (Lei nº 12.711/2012).": [
@@ -127,11 +127,11 @@
     },
     "MEDICINA VETERINÁRIA": {
         "Ampla concorrência": [
-            5,
+            4,
             5
         ],
         "Candidatos autodeclarados pretos, pardos ou indígenas, com renda familiar bruta per capita igual ou inferior a 1 salário mínimo e que tenham cursado integralmente o ensino médio em escolas públicas (Lei nº 12.711/2012).": [
-            6,
+            3,
             4
         ],
         "Candidatos autodeclarados pretos, pardos ou indígenas, independentemente da renda, que tenham cursado integralmente o ensino médio em escolas públicas (Lei nº 12.711/2012).": [
@@ -139,7 +139,7 @@
             0
         ],
         "Candidatos autodeclarados quilombolas, com renda familiar bruta per capita igual ou inferior a 1 salário mínimo e que tenham cursado integralmente o ensino médio em escolas públicas (Lei nº 12.711/2012).": [
-            0,
+            3,
             0
         ],
         "Candidatos com deficiência, independentemente da renda, que tenham cursado integralmente o ensino médio em escolas públicas (Lei nº 12.711/2012).": [
@@ -147,7 +147,7 @@
             1
         ],
         "Candidatos com deficiência, que tenham renda familiar bruta per capita igual ou inferior a 1 salário mínimo e que tenham cursado integralmente o ensino médio em escolas públicas (Lei nº 12.711/2012)": [
-            0,
+            1,
             1
         ],
         "Candidatos com renda familiar bruta per capita igual ou inferior a 1 salário mínimo que tenham cursado integralmente o ensino médio em escolas públicas (Lei nº 12.711/2012).": [
@@ -169,7 +169,7 @@
     },
     "ZOOTECNIA": {
         "Ampla concorrência": [
-            6,
+            5,
             3
         ],
         "Candidatos autodeclarados pretos, pardos ou indígenas, com renda familiar bruta per capita igual ou inferior a 1 salário mínimo e que tenham cursado integralmente o ensino médio em escolas públicas (Lei nº 12.711/2012).": [
@@ -177,7 +177,7 @@
             0
         ],
         "Candidatos autodeclarados pretos, pardos ou indígenas, independentemente da renda, que tenham cursado integralmente o ensino médio em escolas públicas (Lei nº 12.711/2012).": [
-            2,
+            1,
             1
         ],
         "Candidatos autodeclarados quilombolas, com renda familiar bruta per capita igual ou inferior a 1 salário mínimo e que tenham cursado integralmente o ensino médio em escolas públicas (Lei nº 12.711/2012).": [
@@ -185,11 +185,11 @@
             1
         ],
         "Candidatos com deficiência, independentemente da renda, que tenham cursado integralmente o ensino médio em escolas públicas (Lei nº 12.711/2012).": [
-            0,
+            1,
             0
         ],
         "Candidatos com deficiência, que tenham renda familiar bruta per capita igual ou inferior a 1 salário mínimo e que tenham cursado integralmente o ensino médio em escolas públicas (Lei nº 12.711/2012)": [
-            0,
+            1,
             1
         ],
         "Candidatos com renda familiar bruta per capita igual ou inferior a 1 salário mínimo que tenham cursado integralmente o ensino médio em escolas públicas (Lei nº 12.711/2012).": [
@@ -211,7 +211,7 @@
     },
     "CIÊNCIAS SOCIAIS": {
         "Ampla concorrência": [
-            22,
+            12,
             3
         ],
         "Candidatos autodeclarados pretos, pardos ou indígenas, com renda familiar bruta per capita igual ou inferior a 1 salário mínimo e que tenham cursado integralmente o ensino médio em escolas públicas (Lei nº 12.711/2012).": [
@@ -227,7 +227,7 @@
             1
         ],
         "Candidatos que, independentemente da renda, tenham cursado integralmente o ensino médio em escolas públicas (Lei nº 12.711/2012).": [
-            0,
+            10,
             0
         ],
         "Indígenas": [
@@ -295,7 +295,7 @@
     },
     "QUÍMICA": {
         "Ampla concorrência": [
-            12,
+            11,
             0
         ],
         "Candidatos autodeclarados pretos, pardos ou indígenas, com renda familiar bruta per capita igual ou inferior a 1 salário mínimo e que tenham cursado integralmente o ensino médio em escolas públicas (Lei nº 12.711/2012).": [
@@ -331,7 +331,7 @@
             0
         ],
         "Candidatos com deficiência, independentemente da renda, que tenham cursado integralmente o ensino médio em escolas públicas (Lei nº 12.711/2012).": [
-            0,
+            1,
             0
         ]
     },
@@ -379,23 +379,23 @@
     },
     "LOGÍSTICA": {
         "Ampla concorrência": [
-            8,
+            6,
             0
         ],
         "Candidatos autodeclarados pretos, pardos ou indígenas, com renda familiar bruta per capita igual ou inferior a 1 salário mínimo e que tenham cursado integralmente o ensino médio em escolas públicas (Lei nº 12.711/2012).": [
-            2,
+            1,
             2
         ],
         "Candidatos autodeclarados pretos, pardos ou indígenas, independentemente da renda, que tenham cursado integralmente o ensino médio em escolas públicas (Lei nº 12.711/2012).": [
-            5,
+            4,
             3
         ],
         "Candidatos autodeclarados quilombolas, com renda familiar bruta per capita igual ou inferior a 1 salário mínimo e que tenham cursado integralmente o ensino médio em escolas públicas (Lei nº 12.711/2012).": [
-            0,
+            1,
             0
         ],
         "Candidatos com deficiência, independentemente da renda, que tenham cursado integralmente o ensino médio em escolas públicas (Lei nº 12.711/2012).": [
-            0,
+            2,
             1
         ],
         "Candidatos com renda familiar bruta per capita igual ou inferior a 1 salário mínimo que tenham cursado integralmente o ensino médio em escolas públicas (Lei nº 12.711/2012).": [
@@ -415,7 +415,7 @@
             1
         ],
         "Candidatos com deficiência, que tenham renda familiar bruta per capita igual ou inferior a 1 salário mínimo e que tenham cursado integralmente o ensino médio em escolas públicas (Lei nº 12.711/2012)": [
-            0,
+            2,
             0
         ]
     },
@@ -463,23 +463,23 @@
     },
     "MATEMÁTICA": {
         "Ampla concorrência": [
-            11,
+            8,
             4
         ],
         "Candidatos autodeclarados pretos, pardos ou indígenas, com renda familiar bruta per capita igual ou inferior a 1 salário mínimo e que tenham cursado integralmente o ensino médio em escolas públicas (Lei nº 12.711/2012).": [
-            1,
+            2,
             0
         ],
         "Candidatos autodeclarados pretos, pardos ou indígenas, independentemente da renda, que tenham cursado integralmente o ensino médio em escolas públicas (Lei nº 12.711/2012).": [
-            2,
+            3,
             2
         ],
         "Candidatos autodeclarados quilombolas, com renda familiar bruta per capita igual ou inferior a 1 salário mínimo e que tenham cursado integralmente o ensino médio em escolas públicas (Lei nº 12.711/2012).": [
-            0,
+            3,
             0
         ],
         "Candidatos com deficiência, independentemente da renda, que tenham cursado integralmente o ensino médio em escolas públicas (Lei nº 12.711/2012).": [
-            0,
+            1,
             0
         ],
         "Candidatos com deficiência, que tenham renda familiar bruta per capita igual ou inferior a 1 salário mínimo e que tenham cursado integralmente o ensino médio em escolas públicas (Lei nº 12.711/2012)": [
@@ -491,7 +491,7 @@
             0
         ],
         "Candidatos que, independentemente da renda, tenham cursado integralmente o ensino médio em escolas públicas (Lei nº 12.711/2012).": [
-            3,
+            2,
             0
         ],
         "Indígenas": [
@@ -505,11 +505,11 @@
     },
     "EDUCAÇÃO FÍSICA": {
         "Ampla concorrência": [
-            6,
+            5,
             4
         ],
         "Candidatos autodeclarados pretos, pardos ou indígenas, com renda familiar bruta per capita igual ou inferior a 1 salário mínimo e que tenham cursado integralmente o ensino médio em escolas públicas (Lei nº 12.711/2012).": [
-            6,
+            2,
             3
         ],
         "Candidatos autodeclarados pretos, pardos ou indígenas, independentemente da renda, que tenham cursado integralmente o ensino médio em escolas públicas (Lei nº 12.711/2012).": [
@@ -517,7 +517,7 @@
             0
         ],
         "Candidatos com deficiência, que tenham renda familiar bruta per capita igual ou inferior a 1 salário mínimo e que tenham cursado integralmente o ensino médio em escolas públicas (Lei nº 12.711/2012)": [
-            0,
+            1,
             1
         ],
         "Candidatos com renda familiar bruta per capita igual ou inferior a 1 salário mínimo que tenham cursado integralmente o ensino médio em escolas públicas (Lei nº 12.711/2012).": [
@@ -525,7 +525,7 @@
             1
         ],
         "Candidatos que, independentemente da renda, tenham cursado integralmente o ensino médio em escolas públicas (Lei nº 12.711/2012).": [
-            0,
+            1,
             0
         ],
         "Quilombola": [
@@ -537,7 +537,7 @@
             1
         ],
         "Candidatos autodeclarados quilombolas, com renda familiar bruta per capita igual ou inferior a 1 salário mínimo e que tenham cursado integralmente o ensino médio em escolas públicas (Lei nº 12.711/2012).": [
-            0,
+            3,
             0
         ],
         "Candidatos com deficiência, independentemente da renda, que tenham cursado integralmente o ensino médio em escolas públicas (Lei nº 12.711/2012).": [
@@ -589,11 +589,11 @@
     },
     "ABI - LETRAS": {
         "Ampla concorrência": [
-            8,
+            6,
             1
         ],
         "Candidatos autodeclarados pretos, pardos ou indígenas, com renda familiar bruta per capita igual ou inferior a 1 salário mínimo e que tenham cursado integralmente o ensino médio em escolas públicas (Lei nº 12.711/2012).": [
-            7,
+            3,
             4
         ],
         "Candidatos autodeclarados pretos, pardos ou indígenas, independentemente da renda, que tenham cursado integralmente o ensino médio em escolas públicas (Lei nº 12.711/2012).": [
@@ -601,7 +601,7 @@
             4
         ],
         "Candidatos com deficiência, independentemente da renda, que tenham cursado integralmente o ensino médio em escolas públicas (Lei nº 12.711/2012).": [
-            0,
+            1,
             1
         ],
         "Candidatos com renda familiar bruta per capita igual ou inferior a 1 salário mínimo que tenham cursado integralmente o ensino médio em escolas públicas (Lei nº 12.711/2012).": [
@@ -609,7 +609,7 @@
             1
         ],
         "Candidatos que, independentemente da renda, tenham cursado integralmente o ensino médio em escolas públicas (Lei nº 12.711/2012).": [
-            1,
+            0,
             1
         ],
         "Indígenas": [
@@ -621,11 +621,11 @@
             0
         ],
         "Candidatos com deficiência, que tenham renda familiar bruta per capita igual ou inferior a 1 salário mínimo e que tenham cursado integralmente o ensino médio em escolas públicas (Lei nº 12.711/2012)": [
-            0,
+            2,
             0
         ],
         "Candidatos autodeclarados quilombolas, com renda familiar bruta per capita igual ou inferior a 1 salário mínimo e que tenham cursado integralmente o ensino médio em escolas públicas (Lei nº 12.711/2012).": [
-            0,
+            4,
             0
         ]
     }

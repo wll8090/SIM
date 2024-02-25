@@ -1,6 +1,7 @@
 from json import loads, dumps
 from os.path import exists 
 import sys
+from static_csv.data_frame_inscritos import nome_modalidade
 
 
 file=f'{sys.argv.get("path_csv")}{sys.argv.get("csv_vagas_materias")}'
@@ -33,3 +34,11 @@ def get_materias():
 
 if exists(file):
     load_materias()
+
+
+
+def troca_vaga(curso, q, de, para):
+    materias[curso][nome_modalidade[de]][0]-=q   #retira vaga
+    materias[curso][nome_modalidade[para]][0]+=q     #acrescenta
+    write_materias()
+    return materias

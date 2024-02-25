@@ -283,8 +283,16 @@ class usuario:
         socioeconomica=data['socioeconomica']
         if not (socioeconomica.filename.endswith('.csv') and interesse.filename.endswith('.csv')):
             return {'response':False, 'msg':'arquivos não são .CSV'}
-        interesse.save('interesse.csv')
-        socioeconomica.save('socioeconomica.csv')
+        buf1=io.BytesIO() #interesse.csv
+        interesse.save(buf1)
+        with open('interesse.csv','w',encoding='utf8') as arq:
+            arq.write(buf1.getvalue().decode('utf8'))
+
+        buf2=io.BytesIO() #'socioeconomica.csv'
+        socioeconomica.save(buf2)
+        with open('socioeconomica.csv','w',encoding='utf8') as arq:
+            arq.write(buf2.getvalue().decode('latin1'))
+
         copyfile('./socioeconomica.csv','./para_rankear_socioeconomica.csv')
         return {'response':True, 'msg':'ok'}
     
@@ -323,21 +331,21 @@ class usuario:
         dd.to_excel(bufer)
         bufer.seek(0)
         self.token_file={}
-        token=sha256(f'{randint(10**20,10**21):X}'.encode()).hexdigest()   #<<<------token de send file
+        token='1011'#sha256(f'{randint(10**20,10**21):X}'.encode()).hexdigest()   #<<<------token de send file
         file_name='csv_vagas.xlsx'
         self.token_file[token]=file_name
-        sys.argv[file_name]=bufer
+        sys.argv[file_name]=bufer        
         return {"response":True, "token": token}
 
 
     @validar_token
     def rankear(self,data):
         nome_csv='./para_rankear_socioeconomica.csv'
-        completo_csv='intereasse.csv'
+        completo_csv='./interesse.csv'
         if not exists(nome_csv):
             return {'response':False,'msg':'lista de espera não carregada'}
-        seq_de_chamada()
         file=rankear.rankeamento(nome_csv, completo_csv)  #(csv socioeconomica , csv de espera)
+        seq_de_chamada()
         gerar_data_frame(file)
         load_materias()
         return {'response':True,'msg':f'chamada {sys.argv.get("chamada")} em adamento'}

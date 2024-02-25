@@ -19,6 +19,9 @@ app_criar_image:
 app_del_image:
 	docker image rm -f $(image_api)
 
+app_update:
+	make app_stop
+	make app_run
 
 
 

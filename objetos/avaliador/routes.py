@@ -22,7 +22,7 @@ def login(data,IO):
         users_logado[f'{login}-{ip}']=user
         file=f'{sys.argv.get("path_csv")}1_{sys.argv.get("csv_chamada")}'
         return {"response":True, 'msg':"usuario logado", 'token':user.token,
-                'csv':exists(file),'ip':f'{ip}','csv_espera':exists('./para_rankear.csv'),
+                'csv':exists(file),'ip':f'{ip}','csv_espera':exists('./socioeconomica.csv'),
                 'chamada':f'{sys.argv.get("chamada")}'}
     return {"response":False, 'msg':"erro no login"}
 
@@ -31,7 +31,7 @@ def all_data(req):
         data=request.json
     else: data={}
     ip=request.remote_addr
-    ip=request.headers.get('meu-ip-real-telvez-seja')
+    #ip=request.headers.get('meu-ip-real-telvez-seja')
     if not ip:
         return abort(404)
     data['ip']=ip.split(',')[0]
@@ -56,10 +56,9 @@ def rotas(app ):
             key=f'{key}-{data["ip"]}'
             if key in users_logado:
                 ip=request.remote_addr
-                ip=request.headers.get('meu-ip-real-telvez-seja').split(',')[0]
+                p=request.headers.get('meu-ip-real-telvez-seja').split(',')[0]
                 if acao == 'file':                  ## autanticar candidato
                     token=request.args.get('file')
-                    print(token)
                     re=users_logado[key].return_file(token, ip)
                     if re:
                         nome=re
@@ -83,7 +82,8 @@ def rotas(app ):
                 re=users_logado[key].upload_csv(data)
                 
             elif acao == 'up_csv_espera':                  ## upload de csv de lista de espera
-                data['file']=request.files['filecsv']
+                data['interesse']=request.files['interesse']
+                data['socioeconomica']=request.files['socioeconomica']
                 re=users_logado[key].up_csv_espera(data)
 
             elif acao == 'candidatos':                  ## para listar e filtrar os candidatos
@@ -120,7 +120,6 @@ def rotas(app ):
 
             elif acao == 'rankear':
                 re=users_logado[key].rankear(data) 
-
 
             elif acao == 'relatorio_matriculados':                  ## gerar o relatorio de matricula e deixa disponivel em /file?token=token
                 re=users_logado[key].relatorio_matriculados(data)

@@ -33,7 +33,7 @@ def login(data):
            "PWD": sha256(data.get('pwd').encode()).hexdigest() }
     re=consultar_usuario(dados)     ## consulta no banco
     if re:
-        if validar_chamado(dados['NU_CPF_INSCRITO']) and False:
+        if validar_chamado(dados['NU_CPF_INSCRITO']):
             user=cantidato( dados['NU_CPF_INSCRITO'], data.get('pwd'), data.get('email'), data.get('ip'))
         else:
             user=obj_travado(dados['NU_CPF_INSCRITO'], data.get('pwd'), data.get('email'), data.get('ip'))

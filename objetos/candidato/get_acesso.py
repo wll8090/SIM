@@ -5,6 +5,17 @@ import sys
 from hashlib import sha256
 import conexao_db
 from random import randint
+from os import listdir
+
+
+def validar_chamado(cpf):
+    files=[i for i in listdir(f'{sys.argv.get("path_csv")}') if i.endswith(sys.argv.get("csv_chamada"))]
+    for i in files:
+        file=f'{sys.argv.get("path_csv")}{i}'
+        if cpf in open(file,'r', encoding='utf8').read():
+            user_chamado=i.split('_')[0]
+    return sys.argv.get('chamada')==user_chamado
+
 
 def acesso(data):
     cpf=data.get('cpf')
@@ -13,7 +24,8 @@ def acesso(data):
     email=data.get('email')
     cpf=cpf.replace('.','').replace('-','')
     filter=f'NU_CPF_INSCRITO == "{int(cpf)}"'
-    return{'response':False, 'msg':'Seu periodo de chamada terminou'}
+    if not validar_chamado(cpf):
+        return{'response':False, 'msg':'Seu periodo de chamada terminou'}
     dd=data_frame_inscritos.data_filtro(filter)
     index=dd.index.values.tolist()[0]
     if dd.empty:
