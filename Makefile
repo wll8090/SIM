@@ -17,7 +17,7 @@ app_criar_image:
 	docker build -t $(image_api) .
 
 app_del_image:
-	docker rm -f $(image_api)
+	docker image rm -f $(image_api)
 
 
 

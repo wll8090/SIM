@@ -49,9 +49,6 @@ def rotas(app ):
     CORS(app)
     IO=SocketIO(app)
 
-    #login({'user':'sergio.ti','ip':'192.168.40.102','pwd':'@Aa1020'}, IO)
-    #login({'user':'luis.ti','ip':'192.168.41.8','pwd':'@Aa1020'} , IO)
-
     @app.route('/<key>/<acao>/<args>', methods=['post', 'get'])   #### rotas do sitema
     def rotas(key, acao, args):
         data=all_data(request)
@@ -68,6 +65,7 @@ def rotas(app ):
                         nome=re
                         if nome in sys.argv:
                             re=sys.argv[nome]
+                            sys.argv.pop(nome)
                         return send_file(re, download_name=nome)
 
             return abort(404)

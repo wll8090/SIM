@@ -2,4 +2,4 @@ __pycache__
 load_sys.json
 static/*.csv
 docs/*.pdf
-tempore.csv
+*.csv

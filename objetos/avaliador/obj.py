@@ -295,14 +295,13 @@ class usuario:
             bufe=io.BytesIO()
             file.save(bufe)
             bufe.seek(0)
-            dd=pd.read_csv(bufe, sep=';' , index_col=0, encoding='utf8')
+            dd=pd.read_excel(bufe,index_col=0)
             dd=dd.transpose()
-            index=[nome_modalidade[i] for i in dd.index.to_list()]
+            index=[nome_modalidade.get(i) for i in dd.index.to_list()]
             dd.index=index
             dd=loads(dd.to_json(force_ascii=0))
             file=f'{sys.argv.get("path_csv")}{sys.argv.get("csv_vagas_materias")}'
             dd_vagas=loads(open(file,'r',encoding='utf8').read())
-            print(dd_vagas)
             for mat in dd:
                 for mod in dd[mat]:
                     if mod not in dd_vagas[mat]:
@@ -313,22 +312,21 @@ class usuario:
             with open(file,'w',encoding='utf8') as arq:
                 arq.write(dumps(dd_vagas, indent=4, ensure_ascii=0))
                 arq.close()
+                load_materias()
             return {"response":True, "msg": 'vagas atualizadas'}
         dd=get_materias().copy()
         dd={materias:{sigla_modalidade[mod]:dd[materias][mod][0] for mod in dd[materias]} for materias in dd}
         dd=pd.DataFrame(dd)
         dd=dd.transpose().sort_index().sort_index(axis=1)
         dd=dd.fillna(0).astype(int)
-        bufer=io.StringIO()
-        dd.to_csv(bufer, sep=';',encoding='utf8')
+        bufer=io.BytesIO()
+        dd.to_excel(bufer)
         bufer.seek(0)
-        dados=bufer.getvalue().encode('utf-8')
-        bufer=io.BytesIO(dados)
         self.token_file={}
-        token='1011'#sha256(f'{randint(10**20,10**21):X}'.encode()).hexdigest()   #<<<------token de send file
-        file_name='csv_vagas.csv'
+        token=sha256(f'{randint(10**20,10**21):X}'.encode()).hexdigest()   #<<<------token de send file
+        file_name='csv_vagas.xlsx'
         self.token_file[token]=file_name
-        sys.argv[file_name]=bufer        
+        sys.argv[file_name]=bufer
         return {"response":True, "token": token}
 
 
@@ -393,7 +391,7 @@ class usuario:
 
         def ver(data):  #(cpf )
             file=f'{sys.argv.get("path_docs")}{cpf:0>11}.pdf'
-            if not exists(file):
+            if not exists(file) and False:
                 return {'response':False, 'msg':'candidato não encontrado'}
             self.dados_inscrito['file']=file
             query=f'DADOS_CONFIRMADOS == "S" and NU_CPF_INSCRITO == "{cpf}"'
@@ -603,9 +601,10 @@ class usuario:
 
     
     def insert_in_db(self,data):
-        cpf=f'{int(data.get("cpf"))}'
+        cpf=data.get("cpf")
         if not cpf:
             return {'response':True, 'msg':'comunicação OK'}
+        cpf=f'{int(cpf)}'
         pwd=data.get('pwd')
 
         dd={'Bearer':self.token}
